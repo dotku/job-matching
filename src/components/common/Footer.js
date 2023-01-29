@@ -1,18 +1,18 @@
 import React from "react";
-import { makeStyles } from '@material-ui/styles';
-import { Grid } from '@material-ui/core';
-import classnames from 'classnames';
+import { makeStyles } from "@material-ui/styles";
+import { Grid } from "@material-ui/core";
+import classnames from "classnames";
 
 const footerStyles = makeStyles({
   root: {
-    background: '#333',
+    background: "#333",
     border: 0,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
-    padding: '30px',
-    '& a': {
-      color: 'white',
-    }
+    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+    color: "white",
+    padding: "30px",
+    "& a": {
+      color: "white",
+    },
   },
 });
 
@@ -20,7 +20,7 @@ export default function Footer() {
   const classes = footerStyles();
   return (
     <div className={classnames("Footer", classes.root)}>
-      <div className="mainContainer">
+      <div className="container">
         <Grid container>
           <Grid item xs={3}>
             <div>Job Boards</div>
@@ -48,28 +48,52 @@ export default function Footer() {
           <Grid xs={3}>
             <div>Interview Preperation</div>
             <ul>
-              <li><a href="http://interviewcake.com">InterviewCake</a></li>
-              <li><a href="https://www.pramp.com/#/">Pramp</a></li>
-              <li><a href="https://leetcode.com">LeetCode</a></li>
-              <li><a href="https://www.hackerrank.com">HackerRank</a></li>
+              <li>
+                <a href="http://interviewcake.com">InterviewCake</a>
+              </li>
+              <li>
+                <a href="https://www.pramp.com/#/">Pramp</a>
+              </li>
+              <li>
+                <a href="https://leetcode.com">LeetCode</a>
+              </li>
+              <li>
+                <a href="https://www.hackerrank.com">HackerRank</a>
+              </li>
             </ul>
           </Grid>
           <Grid xs={3}>
             <div>Agents</div>
             <ul>
-              <li><a href="https://www.teksystems.com/en">TEKSystems</a></li>
-              <li><a href="https://www.modis.com/">modis</a></li>
-              <li><a href="http://xoriant.com">xoriant</a></li>
-              <li><a href="http://www.collabera.com/">Collabera</a></li>
-              <li><a href="http://www.infinity-cs.com">Infinity Consulting Solutions</a></li>
-              <li><a href="https://www.ustechsolutions.com/">US Tech Solutions</a></li>
+              <li>
+                <a href="https://www.teksystems.com/en">TEKSystems</a>
+              </li>
+              <li>
+                <a href="https://www.modis.com/">modis</a>
+              </li>
+              <li>
+                <a href="http://xoriant.com">xoriant</a>
+              </li>
+              <li>
+                <a href="http://www.collabera.com/">Collabera</a>
+              </li>
+              <li>
+                <a href="http://www.infinity-cs.com">
+                  Infinity Consulting Solutions
+                </a>
+              </li>
+              <li>
+                <a href="https://www.ustechsolutions.com/">US Tech Solutions</a>
+              </li>
             </ul>
           </Grid>
           <Grid xs={3}>
             <div>Join Us</div>
             <ul>
               <li>Welcome to fork and submit pull request.</li>
-              <li>Email me if you want to join the team weijingjaylin(at)gmail.com</li>
+              <li>
+                Email me if you want to join the team weijingjaylin(at)gmail.com
+              </li>
             </ul>
           </Grid>
         </Grid>
