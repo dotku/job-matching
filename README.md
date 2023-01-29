@@ -41,4 +41,9 @@ Display both job seekers and availaber jobs. There will be a search function to
 filter the content.
 
 ## Agents
+
 - anveta.com
+
+## GTD
+
+- Improve the footer modules on agents
