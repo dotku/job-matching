@@ -16,10 +16,10 @@ const footerStyles = makeStyles({
   },
 });
 
-export default function Footer() {
+export default function Footer({ classNames }) {
   const classes = footerStyles();
   return (
-    <div className={classnames("Footer", classes.root)}>
+    <div className={classnames("footer", classes.root, classNames)}>
       <div className="container">
         <Grid container>
           <Grid item xs={3}>

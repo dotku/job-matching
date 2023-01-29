@@ -1,23 +1,44 @@
+import classNames from "classnames";
 import React from "react";
-const agentCompanies = [
-  "TEKSystems",
-  "modis",
-  "xoriant",
-  "Collabera",
-  "Infinity Consulting Solutions",
-  "US Tech Solutions",
+export const agentCompanies = [
+  { title: "TEKSystems", url: "https://www.teksystems.com/en" },
+  { title: "modis", url: "https://www.modis.com/" },
+  { title: "xoriant", url: "http://xoriant.com" },
+  { title: "Collabera", url: "http://www.collabera.com/" },
+  { title: "Infinity Consulting Solutions", url: "http://www.infinity-cs.com" },
+  { title: "US Tech Solutions", url: "https://www.ustechsolutions.com/" },
+  { title: "TrustBrain", url: "https://app.usebraintrust.com/r/weijing1/" },
 ];
+
+export function AgentCompaniesList({ items, linkClassNames }) {
+  return items && items.length ? (
+    <ul>
+      {items.map((items, key) => (
+        <li key={key}>
+          {!items.url ? (
+            items.title
+          ) : (
+            <a href={items.url} className={classNames(linkClassNames)}>
+              {items.title}
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  ) : null;
+}
 
 export function AgentCompanies(props) {
   const { phrase } = props;
-  const results = agentCompanies
-    .filter(company => phrase ? company.match(new RegExp(phrase, 'i')) : true)
-    .map((company, key) => (<li key={key}>{company}</li>));
-  if (!results.length) return null;
-  return <div>
-    <h2>Agent Companies</h2>
-    <React.Fragment>
-      {results}
-    </React.Fragment>
-  </div>;
+  const result = agentCompanies.filter((company) =>
+    phrase ? company.match(new RegExp(phrase, "i")) : true
+  );
+
+  if (!result.length) return null;
+  return (
+    <div>
+      <h2>Agent Companies</h2>
+      <AgentCompaniesList items={result} />
+    </div>
+  );
 }
