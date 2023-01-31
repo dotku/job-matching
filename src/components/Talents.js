@@ -11,8 +11,10 @@ export function Talents(props) {
       .catch((e) => console.error(e));
   }, []);
   const results = talents
-    .filter((talent) => (phrase ? talent.match(new RegExp(phrase, "i")) : true))
-    .map((talent, key) => <li key={key}>{talent}</li>);
+    .filter((talent) =>
+      phrase ? talent.name.match(new RegExp(phrase, "i")) : true
+    )
+    .map((talent, key) => <li key={key}>{talent.name}</li>);
   if (!results.length) return null;
   return (
     <div>
