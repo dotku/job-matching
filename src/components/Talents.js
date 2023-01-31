@@ -1,11 +1,15 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-const talents = ["John", "Jerry", "Merry"];
 export function Talents(props) {
-  const location = useLocation();
-  console.log("location", location);
+  const [talents, setTalents] = useState([]);
   const { phrase } = props;
+  useEffect(() => {
+    fetch("./data/talents.json")
+      .then((rsp) => rsp.json())
+      .then((rsp) => setTalents(rsp))
+      .catch((e) => console.error(e));
+  }, []);
   const results = talents
     .filter((talent) => (phrase ? talent.match(new RegExp(phrase, "i")) : true))
     .map((talent, key) => <li key={key}>{talent}</li>);
