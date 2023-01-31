@@ -31,7 +31,7 @@ export function AgentCompaniesList({ items, linkClassNames }) {
 export function AgentCompanies(props) {
   const { phrase } = props;
   const result = agentCompanies.filter((company) =>
-    phrase ? company.match(new RegExp(phrase, "i")) : true
+    phrase ? company.title.match(new RegExp(phrase, "i")) : true
   );
 
   if (!result.length) return null;
