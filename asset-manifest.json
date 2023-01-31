@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/react-job-matching/static/css/main.a1b57797.chunk.css",
-    "main.js": "/react-job-matching/static/js/main.cf20a499.chunk.js",
-    "main.js.map": "/react-job-matching/static/js/main.cf20a499.chunk.js.map",
+    "main.js": "/react-job-matching/static/js/main.e173a2e7.chunk.js",
+    "main.js.map": "/react-job-matching/static/js/main.e173a2e7.chunk.js.map",
     "runtime~main.js": "/react-job-matching/static/js/runtime~main.4b5dc391.js",
     "runtime~main.js.map": "/react-job-matching/static/js/runtime~main.4b5dc391.js.map",
-    "static/js/2.a8bca7f4.chunk.js": "/react-job-matching/static/js/2.a8bca7f4.chunk.js",
-    "static/js/2.a8bca7f4.chunk.js.map": "/react-job-matching/static/js/2.a8bca7f4.chunk.js.map",
+    "static/js/2.fca6f718.chunk.js": "/react-job-matching/static/js/2.fca6f718.chunk.js",
+    "static/js/2.fca6f718.chunk.js.map": "/react-job-matching/static/js/2.fca6f718.chunk.js.map",
     "index.html": "/react-job-matching/index.html",
-    "precache-manifest.f8ebb63643d7333659ac36151152f764.js": "/react-job-matching/precache-manifest.f8ebb63643d7333659ac36151152f764.js",
+    "precache-manifest.68656d3d60986742df0cb1169a260a97.js": "/react-job-matching/precache-manifest.68656d3d60986742df0cb1169a260a97.js",
     "service-worker.js": "/react-job-matching/service-worker.js",
     "static/css/main.a1b57797.chunk.css.map": "/react-job-matching/static/css/main.a1b57797.chunk.css.map",
     "static/media/logo.svg": "/react-job-matching/static/media/logo.5d5d9eef.svg"
