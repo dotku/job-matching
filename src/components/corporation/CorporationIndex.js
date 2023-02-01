@@ -1,5 +1,5 @@
-import classNames from "classnames";
 import React from "react";
+import { AgentCompaniesList } from "./CorporationList";
 export const agentCompanies = [
   { title: "TEKSystems", url: "https://www.teksystems.com/en" },
   { title: "modis", url: "https://www.modis.com/" },
@@ -9,24 +9,6 @@ export const agentCompanies = [
   { title: "US Tech Solutions", url: "https://www.ustechsolutions.com/" },
   { title: "TrustBrain", url: "https://app.usebraintrust.com/r/weijing1/" },
 ];
-
-export function AgentCompaniesList({ items, linkClassNames }) {
-  return items && items.length ? (
-    <ul>
-      {items.map((items, key) => (
-        <li key={key}>
-          {!items.url ? (
-            items.title
-          ) : (
-            <a href={items.url} className={classNames(linkClassNames)}>
-              {items.title}
-            </a>
-          )}
-        </li>
-      ))}
-    </ul>
-  ) : null;
-}
 
 export function AgentCompanies(props) {
   const { phrase } = props;

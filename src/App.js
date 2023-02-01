@@ -6,12 +6,12 @@ import "./App.css";
 import { Talents } from "./components/Talents";
 import { Jobs } from "./components/Jobs";
 import Footer from "./components/common/Footer";
-import { AgentCompanies } from "./components/AgentCompanies";
+import { AgentCompanies as CorporationIndex } from "./components/corporation/CorporationIndex";
 import { JobBoards } from "./components/JobBoards";
 import Header from "./components/common/Header";
 import { SearchBar } from "./components/common/SearchBar";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
-import Social from "./widgets/social";
+import Social from "./components/social";
 
 export function Home({ phrase }) {
   return (
@@ -19,7 +19,7 @@ export function Home({ phrase }) {
       <Talents phrase={phrase} />
       <Jobs phrase={phrase} />
       <JobBoards phrase={phrase} />
-      <AgentCompanies phrase={phrase} />
+      <CorporationIndex phrase={phrase} />
     </>
   );
 }

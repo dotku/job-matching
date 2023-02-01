@@ -5,7 +5,7 @@ export function Talents(props) {
   const [talents, setTalents] = useState([]);
   const { phrase } = props;
   useEffect(() => {
-    fetch("./data/talents.json")
+    fetch("/react-job-matching/data/talents.json")
       .then((rsp) => rsp.json())
       .then((rsp) => setTalents(rsp))
       .catch((e) => console.error(e));
