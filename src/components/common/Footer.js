@@ -1,6 +1,5 @@
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
-import { Grid } from "@material-ui/core";
 import classnames from "classnames";
 
 const footerStyles = makeStyles({
@@ -21,8 +20,8 @@ export default function Footer({ classNames }) {
   return (
     <div className={classnames("footer", classes.root, classNames)}>
       <div className="container">
-        <Grid container>
-          <Grid item xs={3}>
+        <div className="row">
+          <div className="col-md-3">
             <div>Job Boards</div>
             <ul>
               <li>
@@ -44,8 +43,8 @@ export default function Footer({ classNames }) {
                 <a href="https://www.dice.com/">Dice</a>
               </li>
             </ul>
-          </Grid>
-          <Grid xs={3}>
+          </div>
+          <div className="col-md-3">
             <div>Interview Preperation</div>
             <ul>
               <li>
@@ -61,8 +60,8 @@ export default function Footer({ classNames }) {
                 <a href="https://www.hackerrank.com">HackerRank</a>
               </li>
             </ul>
-          </Grid>
-          <Grid xs={3}>
+          </div>
+          <div className="col-md-3">
             <div>Agents</div>
             <ul>
               <li>
@@ -86,8 +85,8 @@ export default function Footer({ classNames }) {
                 <a href="https://www.ustechsolutions.com/">US Tech Solutions</a>
               </li>
             </ul>
-          </Grid>
-          <Grid xs={3}>
+          </div>
+          <div className="col-md-3">
             <div>Join Us</div>
             <ul>
               <li>Welcome to fork and submit pull request.</li>
@@ -95,8 +94,8 @@ export default function Footer({ classNames }) {
                 Email me if you want to join the team weijingjaylin(at)gmail.com
               </li>
             </ul>
-          </Grid>
-        </Grid>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import { JobBoards } from "./components/JobBoards";
 import Header from "./components/common/Header";
 import { SearchBar } from "./components/common/SearchBar";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import Social from "./widgets/social";
 
 export function Home({ phrase }) {
   return (
@@ -42,6 +43,7 @@ function App() {
               <Route path="/talents">
                 <Talents phrase={phrase} />
               </Route>
+              <Route path="/story/social" component={Social} />
             </Switch>
           </div>
         </div>
