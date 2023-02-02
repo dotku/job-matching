@@ -11,6 +11,8 @@ import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Social from "./components/social";
 import BootStrapLabTooltip from "./components/bootstrap-lab";
 import Resume from "./components/resume";
+import CareerAI from "./components/careerAI";
+import CorporationCreate from "./components/corporation/CorporationCreate";
 
 export function Home({ phrase }) {
   return (
@@ -42,9 +44,11 @@ function App() {
               <Route path="/talents">
                 <Talents phrase={phrase} />
               </Route>
+              <Route path="/corporation/create" component={CorporationCreate} />
               <Route path="/job/:id" component={JobDetail} />
               <Route path="/story/social" component={Social} />
               <Route path="/resume" component={Resume} />
+              <Route path="/careerAI" component={CareerAI} />
               <Route
                 path="/bootstrap-lab/tooltip"
                 component={BootStrapLabTooltip}

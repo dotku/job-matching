@@ -11,8 +11,9 @@ import WithErrorContent from "../../common/WithErrorContent";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app = initializeApp(firebaseConfig, 'app-corporation');
+export const corporationDB = getFirestore(app);
+export const corporationRef = collection(corporationDB, "corporation");
 
 export function JobBoards(props) {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +24,7 @@ export function JobBoards(props) {
   useEffect(() => {
     async function effectQuery() {
       const newJobBoards = [];
-      const corporationRef = collection(db, "corporation");
+
       try {
         const querySnapshot = await getDocs(corporationRef);
 
