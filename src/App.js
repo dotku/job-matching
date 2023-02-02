@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { Talents } from "./components/Talents";
-import { Jobs } from "./components/Jobs";
+import Jobs from "./components/job/JobIndex";
+import JobDetail from "./components/job/JobDetail";
 import Footer from "./components/common/Footer";
 import { AgentCompanies as CorporationIndex } from "./components/corporation/CorporationIndex";
 import { JobBoards } from "./components/corporation/CorporationJobBoards";
@@ -45,6 +46,7 @@ function App() {
               <Route path="/talents">
                 <Talents phrase={phrase} />
               </Route>
+              <Route path="/job/:id" component={JobDetail} />
               <Route path="/story/social" component={Social} />
               <Route path="/resume" component={Resume} />
               <Route
