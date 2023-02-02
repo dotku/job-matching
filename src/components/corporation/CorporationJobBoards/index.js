@@ -56,7 +56,7 @@ export function JobBoards(props) {
       phrase ? board.name.match(new RegExp(phrase, "i")) : true
     )
     .map(({ name, url, candidatesNumber, jobsNumber }, key) => (
-      <div className="col-4 my-2" key={key}>
+      <div className="col-sm-6 col-md-4 my-2" key={key}>
         <div className="card">
           <div className="card-body">
             <div className="card-title h5">

@@ -21,7 +21,7 @@ export default function Footer({ classNames }) {
     <div className={classnames("footer", classes.root, classNames)}>
       <div className="container">
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-md-3 col-xs-6">
             <div>Job Boards</div>
             <ul>
               <li>
@@ -44,7 +44,7 @@ export default function Footer({ classNames }) {
               </li>
             </ul>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-3 col-xs-6">
             <div>Interview Preperation</div>
             <ul>
               <li>
