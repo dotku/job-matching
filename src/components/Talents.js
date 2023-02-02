@@ -59,7 +59,7 @@ export function Talents(props) {
       <Link to="talents">
         <h2 className="d-inline-block">Candidates</h2>
       </Link>
-      <div className="row">{results}</div>
+      <div className="row my-3">{results}</div>
     </div>
   );
 }
