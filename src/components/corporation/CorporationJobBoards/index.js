@@ -34,7 +34,6 @@ export function JobBoards(props) {
         const querySnapshot = await getDocs(corporationRef);
 
         querySnapshot.forEach((doc) => {
-          console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
           const { tags } = doc.data();
 
           if (
@@ -53,10 +52,12 @@ export function JobBoards(props) {
   }, []);
 
   const results = jobBoards
-    .filter((board) => (phrase ? board.match(new RegExp(phrase, "i")) : true))
+    .filter((board) =>
+      phrase ? board.name.match(new RegExp(phrase, "i")) : true
+    )
     .map(({ name, url, candidatesNumber, jobsNumber }, key) => (
-      <div className="col-4 my-2">
-        <div className="card" key={key}>
+      <div className="col-4 my-2" key={key}>
+        <div className="card">
           <div className="card-body">
             <div className="card-title h5">
               {url ? <a href={url}>{name}</a> : { name }}
