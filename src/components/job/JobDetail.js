@@ -1,4 +1,4 @@
-import { collection, getDoc, doc } from "firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import WithErrorContent from "../common/WithErrorContent";
@@ -12,12 +12,9 @@ export default function JobDetail() {
 
   useEffect(() => {
     async function effectQuery() {
-      const newJobs = [];
       const jobRef = doc(jobDB, "job", id);
-      console.log("jobRef", jobRef);
       try {
         const querySnapshot = await getDoc(jobRef);
-        console.log("querySnapshot", querySnapshot.data());
         setJob(querySnapshot.data());
       } catch (e) {
         console.error(e);
@@ -27,6 +24,8 @@ export default function JobDetail() {
       setIsLoading(false);
     }
     effectQuery();
+    // @note we don't have to track job ID change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   if (isLoading) return <div>Loading ...</div>;
   return (

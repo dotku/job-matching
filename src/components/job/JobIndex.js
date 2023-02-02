@@ -1,5 +1,3 @@
-// Import the functions you need from the SDKs you need
-
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./JobConfig";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
@@ -8,7 +6,6 @@ import WithErrorContent from "../common/WithErrorContent";
 import { Link } from "react-router-dom";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-const jobs = ["front end", "back end", "full stack"];
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig, "jobApp");
