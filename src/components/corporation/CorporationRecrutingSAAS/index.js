@@ -1,15 +1,13 @@
-import React from "react";
-const jobBoards = ["Hired", "Woo.io", "LinkedIn", "Angel.co", "indeed", "Dice"];
+const data = ["Hired", "Woo.io", "LinkedIn", "Angel.co", "indeed", "Dice"];
 
-export function JobBoards(props) {
-  const { phrase } = props;
-  const results = jobBoards
+export default function CorportaionRecrutingSAAS({ phrase }) {
+  const results = data
     .filter((board) => (phrase ? board.match(new RegExp(phrase, "i")) : true))
     .map((board, key) => <li key={key}>{board}</li>);
   if (!results.length) return null;
   return (
     <div>
-      <h2>Job Boards</h2>
+      <h2>Recruting SAAS</h2>
       <ul>{results}</ul>
     </div>
   );
