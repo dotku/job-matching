@@ -1,7 +1,4 @@
-import { createStore } from "redux";
-import { Provider } from "react-redux";
 import React, { useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { Talents } from "./components/Talents";
 import Jobs from "./components/job/JobIndex";
@@ -10,7 +7,6 @@ import Footer from "./components/common/Footer";
 import { AgentCompanies as CorporationIndex } from "./components/corporation/CorporationIndex";
 import { JobBoards } from "./components/corporation/CorporationJobBoards";
 import Header from "./components/common/Header";
-import { SearchBar } from "./components/common/SearchBar";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Social from "./components/social";
 import BootStrapLabTooltip from "./components/bootstrap-lab";
