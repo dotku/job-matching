@@ -12,4 +12,5 @@ export const firebaseConfig = {
 export const CorporationTags = {
   RECRUITING_SAAS: "recruiting SAAS",
   CANDIDATE_POOL: "candidate pool",
+  RECRUITING: "recruiting"
 };

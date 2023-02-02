@@ -11,7 +11,7 @@ import WithErrorContent from "../../common/WithErrorContent";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig, 'app-corporation');
+const app = initializeApp(firebaseConfig, "app-corporation");
 export const corporationDB = getFirestore(app);
 export const corporationRef = collection(corporationDB, "corporation");
 
@@ -32,12 +32,22 @@ export function JobBoards(props) {
           const { tags } = doc.data();
 
           if (
+            Array.isArray(tags) &&
             tags.includes(CorporationTags.CANDIDATE_POOL) &&
             tags.includes(CorporationTags.RECRUITING_SAAS)
           )
             newJobBoards.push(doc.data());
+
+          if (
+            tags &&
+            tags[CorporationTags.CANDIDATE_POOL] &&
+            (tags[CorporationTags.RECRUITING_SAAS] ||
+              tags[CorporationTags.RECRUITING])
+          )
+            newJobBoards.push(doc.data());
         });
       } catch (e) {
+        console.error(e);
         setError(e);
       }
       setJobBoards(newJobBoards);
