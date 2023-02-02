@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import { Talents } from "./components/Talents";
 import Jobs from "./components/job/JobIndex";
