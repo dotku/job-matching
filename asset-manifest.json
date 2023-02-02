@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/react-job-matching/static/css/main.1823f397.chunk.css",
-    "main.js": "/react-job-matching/static/js/main.3e1609a4.chunk.js",
-    "main.js.map": "/react-job-matching/static/js/main.3e1609a4.chunk.js.map",
+    "main.js": "/react-job-matching/static/js/main.d51246f9.chunk.js",
+    "main.js.map": "/react-job-matching/static/js/main.d51246f9.chunk.js.map",
     "runtime-main.js": "/react-job-matching/static/js/runtime-main.de248123.js",
     "runtime-main.js.map": "/react-job-matching/static/js/runtime-main.de248123.js.map",
-    "static/js/2.caf3a3eb.chunk.js": "/react-job-matching/static/js/2.caf3a3eb.chunk.js",
-    "static/js/2.caf3a3eb.chunk.js.map": "/react-job-matching/static/js/2.caf3a3eb.chunk.js.map",
+    "static/js/2.0943fd2c.chunk.js": "/react-job-matching/static/js/2.0943fd2c.chunk.js",
+    "static/js/2.0943fd2c.chunk.js.map": "/react-job-matching/static/js/2.0943fd2c.chunk.js.map",
     "index.html": "/react-job-matching/index.html",
     "static/css/main.1823f397.chunk.css.map": "/react-job-matching/static/css/main.1823f397.chunk.css.map",
-    "static/js/2.caf3a3eb.chunk.js.LICENSE.txt": "/react-job-matching/static/js/2.caf3a3eb.chunk.js.LICENSE.txt"
+    "static/js/2.0943fd2c.chunk.js.LICENSE.txt": "/react-job-matching/static/js/2.0943fd2c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.de248123.js",
-    "static/js/2.caf3a3eb.chunk.js",
+    "static/js/2.0943fd2c.chunk.js",
     "static/css/main.1823f397.chunk.css",
-    "static/js/main.3e1609a4.chunk.js"
+    "static/js/main.d51246f9.chunk.js"
   ]
 }
