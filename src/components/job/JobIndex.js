@@ -20,19 +20,15 @@ export default function JobIndex({ phrase }) {
     async function effectQuery() {
       const newJobs = [];
       const jobRef = collection(jobDB, "job");
-      console.log("jobRef", jobRef);
       try {
         const querySnapshot = await getDocs(jobRef);
-        console.log("querySnapshot", querySnapshot);
         querySnapshot.forEach((doc) => {
-          console.log("doc.data()", doc.data());
           newJobs.push({ id: doc.id, ...doc.data() });
         });
       } catch (e) {
         console.error(e);
         setError(e);
       }
-      console.log("newJobs", newJobs);
       setJobs(newJobs);
       setIsLoading(false);
     }
