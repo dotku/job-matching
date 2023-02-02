@@ -33,7 +33,7 @@ npm start
 
 ## Design
 
-refer to [design]('./DESIGN.md') for more detail.
+refer to [design](DESIGN.md) for more detail.
 
 ### Home Page
 
