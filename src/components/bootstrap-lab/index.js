@@ -2,7 +2,7 @@ export default function BootStrapLabTooltip() {
   return (
     <button
       type="button"
-      class="btn btn-secondary"
+      className="btn btn-secondary"
       data-toggle="tooltip"
       data-placement="top"
       title="Tooltip on top"

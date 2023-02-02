@@ -13,6 +13,7 @@ import { SearchBar } from "./components/common/SearchBar";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Social from "./components/social";
 import BootStrapLabTooltip from "./components/bootstrap-lab";
+import Resume from "./components/resume";
 
 export function Home({ phrase }) {
   return (
@@ -45,6 +46,7 @@ function App() {
                 <Talents phrase={phrase} />
               </Route>
               <Route path="/story/social" component={Social} />
+              <Route path="/resume" component={Resume} />
               <Route
                 path="/bootstrap-lab/tooltip"
                 component={BootStrapLabTooltip}
