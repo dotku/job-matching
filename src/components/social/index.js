@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useState } from "react";
 import Moment from "react-moment";
 
 const defaultPosts = [
