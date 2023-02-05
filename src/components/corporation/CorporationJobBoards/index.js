@@ -31,6 +31,8 @@ export function JobBoards(props) {
         querySnapshot.forEach((doc) => {
           const { tags } = doc.data();
 
+          if (!tags) return;
+
           if (
             Array.isArray(tags) &&
             tags.includes(CorporationTags.CANDIDATE_POOL) &&
@@ -39,10 +41,10 @@ export function JobBoards(props) {
             newJobBoards.push(doc.data());
 
           if (
-            tags &&
-            tags[CorporationTags.CANDIDATE_POOL] &&
-            (tags[CorporationTags.RECRUITING_SAAS] ||
-              tags[CorporationTags.RECRUITING])
+            tags[CorporationTags.JOB_BOARD] ||
+            (tags[CorporationTags.CANDIDATE_POOL] &&
+              (tags[CorporationTags.RECRUITING_SAAS] ||
+                tags[CorporationTags.RECRUITING]))
           )
             newJobBoards.push(doc.data());
         });
