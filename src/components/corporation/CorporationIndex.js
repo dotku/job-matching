@@ -31,10 +31,8 @@ export default function CorperationIndex({ phrase }) {
   const results = corporations
     .filter((board) =>
       phrase ? board.name.match(new RegExp(phrase, "i")) : true
-    );
-  console.log(corporations.filter(({ url }) => !url))
-  console.log('results', results)
-  // return null;
+    )
+    .sort((a, b) => b.revenue - a.revenue)
 
   return <div>
     <h2>Corporations</h2>
