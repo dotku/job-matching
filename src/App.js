@@ -4,7 +4,7 @@ import { Talents } from "./components/Talents";
 import Jobs from "./components/job/JobIndex";
 import JobDetail from "./components/job/JobDetail";
 import Footer from "./components/common/Footer";
-import { AgentCompanies as CorporationIndex } from "./components/corporation/CorporationIndex";
+import CorporationIndex from "./components/corporation/CorporationIndex";
 import { JobBoards } from "./components/corporation/CorporationJobBoards";
 import Header from "./components/common/Header";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
@@ -13,6 +13,7 @@ import BootStrapLabTooltip from "./components/bootstrap-lab";
 import Resume from "./components/resume";
 import CareerAI from "./components/careerAI";
 import CorporationCreate from "./components/corporation/CorporationCreate";
+import CorporationStaffing from "./components/corporation/CorporationStaffing";
 
 export function Home({ phrase }) {
   return (
@@ -20,7 +21,7 @@ export function Home({ phrase }) {
       <Talents phrase={phrase} />
       <Jobs phrase={phrase} />
       <JobBoards phrase={phrase} />
-      <CorporationIndex phrase={phrase} />
+      <CorporationStaffing phrase={phrase} />
     </>
   );
 }
@@ -43,6 +44,9 @@ function App() {
               </Route>
               <Route path="/talents">
                 <Talents phrase={phrase} />
+              </Route>
+              <Route path="/corporations">
+                <CorporationIndex phrase={phrase} />
               </Route>
               <Route path="/corporation/create" component={CorporationCreate} />
               <Route path="/job/:id" component={JobDetail} />

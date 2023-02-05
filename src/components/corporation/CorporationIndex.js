@@ -1,26 +1,67 @@
-import React from "react";
-import { AgentCompaniesList } from "./CorporationList";
-export const agentCompanies = [
-  { title: "TEKSystems", url: "https://www.teksystems.com/en" },
-  { title: "modis", url: "https://www.modis.com/" },
-  { title: "xoriant", url: "http://xoriant.com" },
-  { title: "Collabera", url: "http://www.collabera.com/" },
-  { title: "Infinity Consulting Solutions", url: "http://www.infinity-cs.com" },
-  { title: "US Tech Solutions", url: "https://www.ustechsolutions.com/" },
-  { title: "TrustBrain", url: "https://app.usebraintrust.com/r/weijing1/" },
-];
+import { getDocs } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import WithErrorContent from "../common/WithErrorContent";
+import { CorporationCard } from "./CorporationCard";
+import { corporationRef } from "./CorporationJobBoards";
 
-export function AgentCompanies(props) {
-  const { phrase } = props;
-  const result = agentCompanies.filter((company) =>
-    phrase ? company.title.match(new RegExp(phrase, "i")) : true
-  );
+export default function CorperationIndex({ phrase }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [corporations, setCorporations] = useState([]);
 
-  if (!result.length) return null;
-  return (
-    <div>
-      <h2>Agent Companies</h2>
-      <AgentCompaniesList items={result} />
-    </div>
-  );
+  useEffect(() => {
+    async function effectQuery() {
+      const newCorporations = [];
+
+      try {
+        const querySnapshot = await getDocs(corporationRef);
+        querySnapshot.forEach((doc) => {
+          newCorporations.push(doc.data());
+        });
+      } catch (e) {
+        console.error(e);
+        setError(e);
+      }
+      setCorporations(newCorporations);
+      setIsLoading(false);
+    }
+    effectQuery();
+  }, []);
+
+  const results = corporations
+    .filter((board) =>
+      phrase ? board.name.match(new RegExp(phrase, "i")) : true
+    );
+  console.log(corporations.filter(({ url }) => !url))
+  console.log('results', results)
+  // return null;
+
+  return <div>
+    <h2>Corporations</h2>
+    {isLoading ? (
+      <div>Loading ...</div>
+    ) : (
+      // <WithErrorContent error={error}>
+      <div className="row my-3">
+        {results.length ? results.map(({
+          name,
+          url,
+          candidatesNumber,
+          jobsNumber,
+          corporationNumber,
+          memberNumber,
+          revenue,
+        }, idx) => <CorporationCard {...{
+          name,
+          url,
+          candidatesNumber,
+          jobsNumber,
+          corporationNumber,
+          memberNumber,
+          revenue,
+        }} key={idx} />) : "empty content"}
+      </div>
+      // </WithErrorContent>
+    )}
+  </div>
 }
