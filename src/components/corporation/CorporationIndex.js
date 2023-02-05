@@ -63,33 +63,9 @@ export default function CorperationIndex({ phrase }) {
         <WithErrorContent error={error}>
           <div className="row my-3">
             {results.length
-              ? results.map(
-                  (
-                    {
-                      name,
-                      url,
-                      candidatesNumber,
-                      jobsNumber,
-                      corporationNumber,
-                      memberNumber,
-                      revenue,
-                    },
-                    idx
-                  ) => (
-                    <CorporationCard
-                      {...{
-                        name,
-                        url,
-                        candidatesNumber,
-                        jobsNumber,
-                        corporationNumber,
-                        memberNumber,
-                        revenue,
-                      }}
-                      key={idx}
-                    />
-                  )
-                )
+              ? results.map((corporation, idx) => (
+                  <CorporationCard {...{ ...corporation }} key={idx} />
+                ))
               : "empty content"}
           </div>
         </WithErrorContent>

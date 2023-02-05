@@ -1,5 +1,12 @@
 export function CorporationCard({
-  name, url, candidatesNumber, jobsNumber, corporationNumber, memberNumber, revenue,
+  name,
+  url,
+  candidatesNumber,
+  jobsNumber,
+  corporationNumber,
+  memberNumber,
+  revenue,
+  description,
 }) {
   return (
     <div className="col-sm-6 col-md-4 my-2">
@@ -74,6 +81,16 @@ export function CorporationCard({
                   style: "currency",
                   currency: "USD",
                 }).format(revenue)}
+              </div>
+            )}
+            {description && (
+              <div
+                title="candidate number"
+                className="ps-1"
+                data-toggle="tooltip"
+                data-placement="top"
+              >
+                {description}
               </div>
             )}
           </div>
