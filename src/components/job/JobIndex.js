@@ -38,7 +38,7 @@ export default function JobIndex({ phrase }) {
   const results = jobs
     .filter((job) => (phrase ? job.title.match(new RegExp(phrase, "i")) : true))
     .map(({ title, id, company, agent }, idx) => (
-      <div className="col-sm-6 col-md-4 my-2" key={idx}>
+      <div className="col-sm-6 my-2" key={idx}>
         <div className="card">
           <div className="card-body">
             <div className="card-title h5">

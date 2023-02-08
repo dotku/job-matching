@@ -85,7 +85,6 @@ export function JobBoards(props) {
                 {memberNumber && (
                   <div
                     title="candidate number"
-                    className="ps-1"
                     data-toggle="tooltip"
                     data-placement="top"
                   >
@@ -98,7 +97,6 @@ export function JobBoards(props) {
                 {candidatesNumber && (
                   <div
                     title="candidate number"
-                    className="ps-1"
                     data-toggle="tooltip"
                     data-placement="top"
                   >
@@ -111,7 +109,6 @@ export function JobBoards(props) {
                 {jobsNumber && (
                   <div
                     title="candidate number"
-                    className="ps-1"
                     data-toggle="tooltip"
                     data-placement="top"
                   >
@@ -124,7 +121,6 @@ export function JobBoards(props) {
                 {corporationNumber && (
                   <div
                     title="candidate number"
-                    className="ps-1"
                     data-toggle="tooltip"
                     data-placement="top"
                   >
@@ -137,7 +133,6 @@ export function JobBoards(props) {
                 {revenue && (
                   <div
                     title="candidate number"
-                    className="ps-1"
                     data-toggle="tooltip"
                     data-placement="top"
                   >
