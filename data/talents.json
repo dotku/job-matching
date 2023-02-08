@@ -1,24 +1,27 @@
 [
   {
     "id": 0,
-    "name": "Alex",
+    "name": "T*** Coker",
     "career_age": 10,
+    "current_company": "Apple",
     "highest_position": "Software Engineer Manager",
     "name_cn": "亚历山大",
     "email": "test001@example.com"
   },
   {
     "id": 1,
-    "name": "John",
+    "name": "S*** Nadella",
     "career_age": 20,
+    "current_company": "Microsoft",
     "highest_position": "Software Engineer Director",
     "name_cn": "约翰",
     "email": "test002@example.com"
   },
   {
     "id": 2,
-    "name": "Jerry",
+    "name": "S*** Pichai",
     "career_age": 30,
+    "current_company": "Google",
     "highest_position": "CTO",
     "name_cn": "杰瑞",
     "email": "test003@example.com"
@@ -27,7 +30,8 @@
     "id": 3,
     "career_age": 3,
     "highest_position": "Senior Software Engineer",
-    "name": "Merry",
+    "name": "J*** Huang",
+    "current_company": "Nvidia",
     "name_name": "玛丽",
     "email": "test004@example.com"
   },
@@ -35,7 +39,8 @@
     "id": 4,
     "career_age": 5,
     "highest_position": "Staff Software Engineer",
-    "name": "Justin",
+    "current_company": "Amazon",
+    "name": "J*** Bezos",
     "name_name": "杰斯汀",
     "email": "test004@example.com"
   },
@@ -43,7 +48,8 @@
     "id": 5,
     "career_age": 0,
     "highest_position": "Student",
-    "name": "Mark",
+    "current_company": "Meta",
+    "name": "M*** Zucker",
     "name_name": "马克",
     "email": "test004@example.com"
   }
