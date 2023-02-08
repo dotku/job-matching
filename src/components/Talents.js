@@ -36,23 +36,26 @@ export function Talents(props) {
                   </div>
                 </div>
                 <div className="ms-2">
-                  <div className="h5 mb-0">
-                    <Link to="/resume">{talent.name}</Link>
+                  <div>
+                    <span className="h5">
+                      <Link to="/resume" className="mb-0">
+                        {talent.name}
+                      </Link>
+                    </span>
+                    <span title="Year of Experience" className="ms-1">
+                      {talent.career_age}yr(s)
+                    </span>
+                  </div>
+                  <div>
+                    <span>{talent.highest_position}</span>
                     {talent.current_company && (
-                      <>
-                        {` (`}
+                      <span>
+                        {" at "}
                         <Link to={`/coperation/${talent.current_company}`}>
                           {talent.current_company}
                         </Link>
-                        {`)`}
-                      </>
+                      </span>
                     )}
-                  </div>
-                  <div>
-                    <span title="Year of Experience">
-                      {talent.career_age}yr(s)
-                    </span>
-                    <span className="ms-1">{talent.highest_position}</span>
                   </div>
                 </div>
               </div>
