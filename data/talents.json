@@ -5,35 +5,45 @@
     "career_age": 10,
     "current_company": "Apple",
     "highest_position": "Software Engineer Manager",
+    "salary_min": 2000000,
+    "salary_max": 2000000,
+    "salary": 98700000,
     "name_cn": "亚历山大",
-    "email": "test001@example.com"
+    "email": "test001@example.com",
+    "looking_for": "I'm looking for building a fantastic product that amaze the world!"
   },
   {
     "id": 1,
     "name": "S*** Nadella",
+    "salary": 55000000,
     "career_age": 20,
     "current_company": "Microsoft",
     "highest_position": "Software Engineer Director",
     "name_cn": "约翰",
-    "email": "test002@example.com"
+    "email": "test002@example.com",
+    "looking_for": "To help all business to success on the road that achived their goal."
   },
   {
     "id": 2,
     "name": "S*** Pichai",
+    "salary": 242000000,
     "career_age": 30,
     "current_company": "Google",
     "highest_position": "CTO",
     "name_cn": "杰瑞",
-    "email": "test003@example.com"
+    "email": "test003@example.com",
+    "looking_for": "Help people to understand the world."
   },
   {
     "id": 3,
     "career_age": 3,
+    "salary": 23737661,
     "highest_position": "Senior Software Engineer",
     "name": "J*** Huang",
     "current_company": "Nvidia",
     "name_name": "玛丽",
-    "email": "test004@example.com"
+    "email": "test004@example.com",
+    "looking_for": "Provide the best computing devices for the industries."
   },
   {
     "id": 4,
@@ -42,7 +52,8 @@
     "current_company": "Amazon",
     "name": "J*** Bezos",
     "name_name": "杰斯汀",
-    "email": "test004@example.com"
+    "email": "test004@example.com",
+    "looking_for": "Help the customers to find the products they need for their daily life."
   },
   {
     "id": 5,
@@ -51,6 +62,7 @@
     "current_company": "Meta",
     "name": "M*** Zucker",
     "name_name": "马克",
-    "email": "test004@example.com"
+    "email": "test004@example.com",
+    "looking_for": "Connect everyone together, and build a better community."
   }
 ]
