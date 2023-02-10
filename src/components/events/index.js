@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 
 export default function Events() {
   const [results, setResults] = useState([]);
+
   useEffect(() => {
     fetch("/react-job-matching/data/events.json")
       .then((rsp) => rsp.json())
       .then((rsp) => setResults(rsp))
       .catch((e) => console.error(e));
   }, []);
+
   return results && results.length ? (
     results
       .filter((_item, idx) => idx === 0)
