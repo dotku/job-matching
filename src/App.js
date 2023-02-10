@@ -1,11 +1,9 @@
 import { useState } from "react";
 import "./App.css";
 import { Talents } from "./components/Talents";
-import Jobs from "./components/job/JobIndex";
 import JobDetail from "./components/job/JobDetail";
 import Footer from "./components/common/Footer";
 import CorporationIndex from "./components/corporation/CorporationIndex";
-import { JobBoards } from "./components/corporation/CorporationJobBoards";
 import Header from "./components/common/Header";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Social from "./components/social";
@@ -13,18 +11,7 @@ import BootStrapLabTooltip from "./components/bootstrap-lab";
 import Resume from "./components/resume";
 import CareerAI from "./components/careerAI";
 import CorporationCreate from "./components/corporation/CorporationCreate";
-import CorporationStaffing from "./components/corporation/CorporationStaffing";
-
-export function Home({ phrase }) {
-  return (
-    <>
-      <Talents phrase={phrase} />
-      <Jobs phrase={phrase} />
-      <JobBoards phrase={phrase} />
-      <CorporationStaffing phrase={phrase} />
-    </>
-  );
-}
+import { Home } from "./Home";
 
 function App() {
   const [phrase, setPhrase] = useState("");

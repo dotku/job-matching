@@ -35,17 +35,29 @@ export function Talents(props) {
                     ></i>
                   </div>
                 </div>
-                <div className="ms-2">
-                  <div>
-                    <span className="h5">
-                      <Link to="/resume" className="mb-0">
-                        {talent.name}
-                      </Link>
-                    </span>
-                    <span title="Year of Experience" className="ms-1">
-                      {talent.career_age}yr(s)
-                    </span>
+                <div className="ms-2 flex-grow-1">
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <span className="h5">
+                        <Link to="/resume" className="mb-0">
+                          {talent.name}
+                        </Link>
+                      </span>
+                      <span title="Year of Experience" className="ms-1">
+                        {talent.career_age}yr(s)
+                      </span>
+                    </div>
+                    {talent.salary && (
+                      <div title="Salary" className="text-end">
+                        {new Intl.NumberFormat("en", {
+                          notation: "compact",
+                          style: "currency",
+                          currency: "USD",
+                        }).format(talent.salary)}
+                      </div>
+                    )}
                   </div>
+
                   <div>
                     <span>{talent.highest_position}</span>
                     {talent.current_company && (
@@ -60,6 +72,9 @@ export function Talents(props) {
                 </div>
               </div>
             </div>
+            <div className="card-body p-0 pt-3">
+              <div>{talent.looking_for}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -70,7 +85,7 @@ export function Talents(props) {
       <Link to="talents">
         <h2 className="d-inline-block">Candidates</h2>
       </Link>
-      <div className="row my-3">{results}</div>
+      <div className="row mb-3">{results}</div>
     </div>
   );
 }
