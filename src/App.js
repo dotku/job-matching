@@ -12,6 +12,7 @@ import Resume from "./components/resume";
 import CareerAI from "./components/careerAI";
 import CorporationCreate from "./components/corporation/CorporationCreate";
 import { Home } from "./Home";
+import KBVISA from "./components/knowledge-base/visa";
 
 function App() {
   const [phrase, setPhrase] = useState("");
@@ -40,6 +41,7 @@ function App() {
               <Route path="/story/social" component={Social} />
               <Route path="/resume" component={Resume} />
               <Route path="/careerAI" component={CareerAI} />
+              <Route path="/knowledge-base/visa" component={KBVISA} />
               <Route
                 path="/bootstrap-lab/tooltip"
                 component={BootStrapLabTooltip}
