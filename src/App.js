@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import { Talents } from "./components/Talents";
+import { Talents } from "./components/user/Talents";
 import JobDetail from "./components/job/JobDetail";
 import Footer from "./components/common/Footer";
 import CorporationIndex from "./components/corporation/CorporationIndex";

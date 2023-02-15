@@ -1,4 +1,4 @@
-import { Talents } from "./components/Talents";
+import { Talents } from "./components/user/Talents";
 import Jobs from "./components/job/JobIndex";
 import { JobBoards } from "./components/corporation/CorporationJobBoards";
 import CorporationStaffing from "./components/corporation/CorporationStaffing";
