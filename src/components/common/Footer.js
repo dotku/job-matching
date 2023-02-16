@@ -91,7 +91,7 @@ export default function Footer({ classNames }) {
             <ul>
               <li>Welcome to fork and submit pull request.</li>
               <li>
-                Email me if you want to join the team weijingjaylin(at)gmail.com
+                Email me if you want to join the team <a href="mailto:jobmatching2023@gmail.com">jobmatching2023(at)gmail.com</a>
               </li>
             </ul>
           </div>
