@@ -18,7 +18,7 @@ const footerStyles = makeStyles({
 export default function Footer({ classNames }) {
   const classes = footerStyles();
   return (
-    <div className={classnames("footer", classes.root, classNames)}>
+    <footer className={classnames("footer", classes.root, classNames)}>
       <div className="container">
         <div className="row">
           <div className="col-md-3 col-xs-6">
@@ -96,7 +96,8 @@ export default function Footer({ classNames }) {
             </ul>
           </div>
         </div>
+        <small className="d-block small text-center">Copyrights &copy; 2019 - 2023</small>
       </div>
-    </div>
+    </footer>
   );
 }
