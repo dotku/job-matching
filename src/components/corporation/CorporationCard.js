@@ -66,7 +66,7 @@ export function CorporationCard({
           <div className="card-text">
             {memberNumber && (
               <div
-                title="candidate number"
+                title="Member Number"
                 className="ps-1"
                 data-toggle="tooltip"
                 data-placement="top"
@@ -79,7 +79,7 @@ export function CorporationCard({
             )}
             {candidatesNumber && (
               <div
-                title="candidate number"
+                title="Candidate Number"
                 className="ps-1"
                 data-toggle="tooltip"
                 data-placement="top"
@@ -92,7 +92,7 @@ export function CorporationCard({
             )}
             {jobsNumber && (
               <div
-                title="candidate number"
+                title="Job Number"
                 className="ps-1"
                 data-toggle="tooltip"
                 data-placement="top"
@@ -105,7 +105,7 @@ export function CorporationCard({
             )}
             {corporationNumber && (
               <div
-                title="candidate number"
+                title="Corporation Number"
                 className="ps-1"
                 data-toggle="tooltip"
                 data-placement="top"
@@ -118,7 +118,7 @@ export function CorporationCard({
             )}
             {revenue && (
               <div
-                title="candidate number"
+                title="Revenue"
                 className="ps-1"
                 data-toggle="tooltip"
                 data-placement="top"
@@ -134,7 +134,7 @@ export function CorporationCard({
             {parent && <ParentRow path={parent} />}
             {description && (
               <div
-                title="candidate number"
+                title="description"
                 className="ps-1"
                 data-toggle="tooltip"
                 data-placement="top"
