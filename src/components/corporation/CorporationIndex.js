@@ -5,7 +5,7 @@ import WithErrorContent from "../common/WithErrorContent";
 import { CorporationCard } from "./CorporationCard";
 import { corporationRef } from "./CorporationJobBoards";
 
-export default function CorperationIndex({ phrase }) {
+export default function CorporationIndex({ phrase }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [corporations, setCorporations] = useState([]);

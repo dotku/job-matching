@@ -1,3 +1,50 @@
+import { getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+
+const CardRow = ({ children, title }) => (
+  <div
+    title={title || ""}
+    className="ps-1"
+    data-toggle="tooltip"
+    data-placement="top"
+  >
+    {children}
+  </div>
+);
+
+function ParentRow({ path }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [parentData, setParentData] = useState(null);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    async function fetchParentData() {
+      try {
+        const doc = await getDoc(path);
+        // const data = doc.val();
+        // console.log('doc', doc.data());
+        setParentData(doc.data());
+        setIsLoading(false);
+      } catch (e) {
+        setIsError(true);
+        console.error(e);
+      }
+    }
+    fetchParentData();
+  }, [path]);
+
+  if (isError) {
+    console.error();
+  }
+  if (isLoading) return <>Loading ...</>;
+  const { url, name } = parentData;
+  return (
+    <CardRow>
+      parent: <a href={url}>{name}</a>
+    </CardRow>
+  );
+}
+
 export function CorporationCard({
   name,
   url,
@@ -7,6 +54,7 @@ export function CorporationCard({
   memberNumber,
   revenue,
   description,
+  parent,
 }) {
   return (
     <div className="col-sm-6 col-md-4 my-2">
@@ -83,6 +131,7 @@ export function CorporationCard({
                 }).format(revenue)}
               </div>
             )}
+            {parent && <ParentRow path={parent} />}
             {description && (
               <div
                 title="candidate number"
