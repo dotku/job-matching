@@ -49,12 +49,13 @@ filter the content.
 - Improve the footer modules on agents
 
 ### References
-- https://landkit.goodthemes.co/
-- https://www.cuebit.ai/startups_still_hiring
-- https://itechdata.ai/
-- https://millennialmoneyman.com/online-data-entry-jobs-from-home/
-- https://www.flexjobs.com/
-- https://startbootstrap.com/theme/clean-blog-angular
-- https://boards.greenhouse.io/carta
-- https://app.greenhouse.io/
-- https://growjo.com/industry/Recruiting
+
+- [https://landkit.goodthemes.co/](https://landkit.goodthemes.co/)
+- [https://www.cuebit.ai/startups_still_hiring](https://www.cuebit.ai/startups_still_hiring)
+- [https://itechdata.ai/](https://itechdata.ai/)
+- [https://millennialmoneyman.com/online-data-entry-jobs-from-home/](https://millennialmoneyman.com/online-data-entry-jobs-from-home/)
+- [https://www.flexjobs.com/](https://www.flexjobs.com/)
+- [https://startbootstrap.com/theme/clean-blog-angular](https://startbootstrap.com/theme/clean-blog-angular)
+- [https://boards.greenhouse.io/carta](https://boards.greenhouse.io/carta)
+- [https://app.greenhouse.io/](https://app.greenhouse.io/)
+- [https://growjo.com/industry/Recruiting](https://growjo.com/industry/Recruiting)
