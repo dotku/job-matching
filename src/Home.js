@@ -9,8 +9,8 @@ export function Home({ phrase }) {
   return (
     <>
       <div className="row">
-        <div className="col-6"><Events /></div>
-        <div className="col-6"><Insight /></div>
+        <div className="col-12 col-sm-6"><Events /></div>
+        <div className="col-12 col-sm-6"><Insight /></div>
       </div>
       <Talents phrase={phrase} />
       <Jobs phrase={phrase} />

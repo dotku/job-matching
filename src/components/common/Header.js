@@ -8,7 +8,7 @@ export default function Header({ phrase, handlePhraseChange }) {
       <Link to="/">
         <h1 className="my-3">JOB MATCHING</h1>
       </Link>
-      <div className="d-flex  h-100">
+      <div className="d-flex h-100">
         <SearchBar value={phrase} onChange={handlePhraseChange} />
       </div>
     </div>
