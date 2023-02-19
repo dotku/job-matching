@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 import "./App.css";
 import { Talents } from "./components/user/Talents";
 import JobDetail from "./components/job/JobDetail";
@@ -14,44 +14,55 @@ import CorporationCreate from "./components/corporation/CorporationCreate";
 import { Home } from "./Home";
 import KBVISA from "./components/knowledge-base/visa";
 
+export const AppContext = createContext();
+
 function App() {
   const [phrase, setPhrase] = useState("");
+  const [appState, setAppState] = useState(null);
   let handlePhraseChange = (e) => {
     console.log(e.target.value);
     setPhrase(e.target.value);
   };
   return (
-    <Router>
-      <div className="App">
-        <div className="container" style={{ minHeight: "calc(100vh - 239px)" }}>
-          <Header phrase={phrase} handlePhraseChange={handlePhraseChange} />
-          <div className="container">
-            <Switch>
-              <Route exact path="/">
-                <Home phrase={phrase} />
-              </Route>
-              <Route path="/talents">
-                <Talents phrase={phrase} />
-              </Route>
-              <Route path="/corporations">
-                <CorporationIndex phrase={phrase} />
-              </Route>
-              <Route path="/corporation/create" component={CorporationCreate} />
-              <Route path="/job/:id" component={JobDetail} />
-              <Route path="/story/social" component={Social} />
-              <Route path="/resume" component={Resume} />
-              <Route path="/careerAI" component={CareerAI} />
-              <Route path="/knowledge-base/visa" component={KBVISA} />
-              <Route
-                path="/bootstrap-lab/tooltip"
-                component={BootStrapLabTooltip}
-              />
-            </Switch>
+    <AppContext.Provider value={{ appState, setAppState }}>
+      <Router>
+        <div className="App">
+          <div
+            className="container"
+            style={{ minHeight: "calc(100vh - 239px)" }}
+          >
+            <Header phrase={phrase} handlePhraseChange={handlePhraseChange} />
+            <div className="container">
+              <Switch>
+                <Route exact path="/">
+                  <Home phrase={phrase} />
+                </Route>
+                <Route path="/talents">
+                  <Talents phrase={phrase} />
+                </Route>
+                <Route path="/corporations">
+                  <CorporationIndex phrase={phrase} />
+                </Route>
+                <Route
+                  path="/corporation/create"
+                  component={CorporationCreate}
+                />
+                <Route path="/job/:id" component={JobDetail} />
+                <Route path="/story/social" component={Social} />
+                <Route path="/resume" component={Resume} />
+                <Route path="/careerAI" component={CareerAI} />
+                <Route path="/knowledge-base/visa" component={KBVISA} />
+                <Route
+                  path="/bootstrap-lab/tooltip"
+                  component={BootStrapLabTooltip}
+                />
+              </Switch>
+            </div>
           </div>
+          <Footer classNames="mt-3" />
         </div>
-        <Footer classNames="mt-3" />
-      </div>
-    </Router>
+      </Router>
+    </AppContext.Provider>
   );
 }
 
