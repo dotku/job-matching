@@ -50,7 +50,7 @@ export default function RegisterSignInFormPassword() {
       <div>
         <div>
           <div className="m-3">
-            <div className="display-2">Welcome</div>
+            <div className="display-6">Welcome</div>
           </div>
           <div className="m-3">
             <label htmlFor="email">Email</label>
@@ -72,12 +72,12 @@ export default function RegisterSignInFormPassword() {
           </div>
           <div className="m-3 text-center">
             <button
-              className="btn btn-outline-primary m-3"
+              className="btn btn-outline-primary me-3 mt-3"
               onClick={handleSignIn}
             >
               Sign in
             </button>
-            <button className="btn btn-primary m-3" type="submit">
+            <button className="btn btn-primary mt-3" type="submit">
               Register
             </button>
           </div>

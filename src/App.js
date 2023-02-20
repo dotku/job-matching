@@ -32,7 +32,7 @@ function App() {
             style={{ minHeight: "calc(100vh - 239px)" }}
           >
             <Header phrase={phrase} handlePhraseChange={handlePhraseChange} />
-            <div className="container">
+            <div className="">
               <Switch>
                 <Route exact path="/">
                   <Home phrase={phrase} />

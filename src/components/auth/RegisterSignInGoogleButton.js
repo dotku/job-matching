@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "../user/UserConfig";
+import { firebaseConfig } from "../../config/UserConfig";
 import SignOutButton from "./SignOutButton";
 
 export const userApp = initializeApp(firebaseConfig, "user");
