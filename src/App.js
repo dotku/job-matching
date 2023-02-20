@@ -13,6 +13,7 @@ import CareerAI from "./components/careerAI";
 import CorporationCreate from "./components/corporation/CorporationCreate";
 import { Home } from "./Home";
 import KBVISA from "./components/knowledge-base/visa";
+import NotFound from "./components/NotFound";
 
 function App() {
   const [phrase, setPhrase] = useState("");
@@ -46,6 +47,7 @@ function App() {
                 path="/bootstrap-lab/tooltip"
                 component={BootStrapLabTooltip}
               />
+              <Route path="*" component={NotFound} />
             </Switch>
           </div>
         </div>
