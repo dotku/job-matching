@@ -1,7 +1,7 @@
 import { Talents } from "./components/user/Talents";
 import Jobs from "./components/job/JobIndex";
-import { JobBoards } from "./components/corporation/CorporationJobBoards";
-import CorporationStaffing from "./components/corporation/CorporationStaffing";
+import { JobBoards } from "./components/Corporation/CorporationJobBoards";
+import CorporationStaffing from "./components/Corporation/CorporationStaffing";
 import Events from "./components/Events";
 import ChildDependHeightAligner from "./components/common/ChildDependHeightAligner";
 import Insight from "./components/Tips";
