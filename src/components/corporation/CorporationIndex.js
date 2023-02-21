@@ -130,7 +130,8 @@ export default function CorporationIndex({ phrase }) {
       <h2>Corporations</h2>
       <div className="d-flex justify-content-between">
         <div>
-          Page: {page} / {Math.floor(total / ITEM_SIZE_PER_PAGE)} | Sort by{" "}
+          Page: {page} / {Math.floor(total / ITEM_SIZE_PER_PAGE)}
+          {/* | Sort by{" "}
           <button
             onClick={() => setIfSortByRevnue(!ifSortByRenvue)}
             className={classNames(
@@ -139,7 +140,7 @@ export default function CorporationIndex({ phrase }) {
             )}
           >
             Revenue
-          </button>
+          </button> */}
         </div>
         <div>
           <button
