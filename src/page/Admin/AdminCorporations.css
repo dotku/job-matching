@@ -1,0 +1,6 @@
+.tableFixHead          { overflow-y: scroll; height: 500px;}
+.tableFixHead thead th { position: sticky; top: 0; z-index: 1; background-color: #eee; }
+/* table  { border-collapse: collapse; width: 100%; }
+th, td { padding: 8px 16px; }
+th     { background:#eee; } */
+@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css");

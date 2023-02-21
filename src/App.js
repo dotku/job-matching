@@ -14,6 +14,7 @@ import CorporationCreate from "./components/Corporation/CorporationCreate";
 import { Home } from "./Home";
 import KBVISA from "./components/knowledge-base/visa";
 import NotFound from "./components/NotFound";
+import AdminCorporations from "./page/Admin/AdminCorporations";
 
 function App() {
   const [phrase, setPhrase] = useState("");
@@ -30,6 +31,9 @@ function App() {
             <Switch>
               <Route exact path="/">
                 <Home phrase={phrase} />
+              </Route>
+              <Route path="/admin/corporations">
+                <AdminCorporations phrase={phrase} />
               </Route>
               <Route path="/talents">
                 <Talents phrase={phrase} />

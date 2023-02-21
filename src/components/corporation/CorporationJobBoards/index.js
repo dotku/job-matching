@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig, "app-corporation");
 export const corporationDB = getFirestore(app);
 export const corporationRef = collection(corporationDB, "corporation");
 
-export function JobBoards(props) {
+export default function CorporationJobBoardsIndex(props) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [jobBoards, setJobBoards] = useState([]);
