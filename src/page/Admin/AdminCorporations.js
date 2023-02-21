@@ -17,8 +17,12 @@ import "./AdminCorporations.css";
 
 const ITEM_SIZE_PER_PAGE = 1000;
 const columns = [
-  { text: "name", dataField: "name", sort: true },
-  { text: "url", dataField: "url" },
+  {
+    text: "name",
+    dataField: "name",
+    sort: true,
+    formatter: (cell, row) => <a href={row["url"]}>{cell}</a>,
+  },
   {
     text: "revenue",
     dataField: "revenue",
@@ -30,6 +34,21 @@ const columns = [
         style: "currency",
         currency: "USD",
       }).format(cell),
+  },
+  {
+    text: "member",
+    dataField: "memberNumber",
+    sort: true,
+    formatter: (cell) =>
+      cell &&
+      new Intl.NumberFormat("en", {
+        notation: "compact",
+      }).format(cell),
+  },
+  {
+    text: "description",
+    dataField: "description",
+    formatter: (cell) => <div style={{ maxWidth: 300 }}>{cell}</div>,
   },
 ];
 
