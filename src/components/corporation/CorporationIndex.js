@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import {
   getDocs,
   startAt,
@@ -6,10 +5,9 @@ import {
   orderBy,
   limit,
   startAfter,
-  endBefore,
   endAt,
 } from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import PayPalButton from "../common/PaypalButton";
 import WithErrorContent from "../common/WithErrorContent";
 import { CorporationCard } from "./CorporationCard";
@@ -23,7 +21,7 @@ export default function CorporationIndex({ phrase }) {
   const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
   const [corporations, setCorporations] = useState([]);
-  const [ifSortByRenvue, setIfSortByRevnue] = useState(false);
+  // const [ifSortByRenvue, setIfSortByRevnue] = useState(false);
   const [prevRange, setPrevRange] = useState({});
 
   useEffect(() => {
@@ -113,17 +111,17 @@ export default function CorporationIndex({ phrase }) {
     setPage((page) => --page);
   };
 
-  const filteredCopoerations = corporations.filter((board) =>
+  const results = corporations.filter((board) =>
     phrase ? board.name.match(new RegExp(phrase, "i")) : true
   );
 
-  const results = useMemo(
-    () =>
-      ifSortByRenvue
-        ? filteredCopoerations.sort((a, b) => b.revenue - a.revenue)
-        : filteredCopoerations,
-    [ifSortByRenvue, filteredCopoerations]
-  );
+  // const results = useMemo(
+  //   () =>
+  //     ifSortByRenvue
+  //       ? filteredCopoerations.sort((a, b) => b.revenue - a.revenue)
+  //       : filteredCopoerations,
+  //   [ifSortByRenvue, filteredCopoerations]
+  // );
 
   return (
     <div>
