@@ -1,2 +1,2 @@
-import Event from "./Event";
-export default Event;
+import Events from "./Events";
+export default Events;
