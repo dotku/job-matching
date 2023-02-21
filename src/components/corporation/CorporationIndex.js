@@ -7,6 +7,7 @@ import {
   limit,
   startAfter,
   endBefore,
+  endAt,
 } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import PayPalButton from "../common/PaypalButton";
@@ -23,9 +24,7 @@ export default function CorporationIndex({ phrase }) {
   const [error, setError] = useState(null);
   const [corporations, setCorporations] = useState([]);
   const [ifSortByRenvue, setIfSortByRevnue] = useState(false);
-  const [querySnapshot, setQuerySnapshot] = useState(null);
-  const [startAfterDoc, setStartAfterDoc] = useState(null);
-  const [prevQuery, setPrevQuery] = useState(null);
+  const [prevRange, setPrevRange] = useState({});
 
   useEffect(() => {
     async function effectQuery() {
@@ -44,11 +43,17 @@ export default function CorporationIndex({ phrase }) {
           orderBy("revenue", "desc"),
           limit(ITEM_SIZE_PER_PAGE)
         );
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
+        const docSnapshots = await getDocs(q);
+        setPrevRange({
+          ...prevRange,
+          [page]: [
+            docSnapshots.docs[0],
+            docSnapshots.docs[docSnapshots.docs.length - 1],
+          ],
+        });
+        docSnapshots.forEach((doc) => {
           newCorporations.push(doc.data());
         });
-        setQuerySnapshot(querySnapshot);
       } catch (e) {
         console.error(e);
         setError(e);
@@ -61,36 +66,30 @@ export default function CorporationIndex({ phrase }) {
 
   const handleNextClick = () => {
     const newCorporations = [];
-    console.log("querySnapshot.docs.length", querySnapshot.docs.length);
-    const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-    const firstDocument = querySnapshot.docs[0];
-    console.log("last", lastVisible);
-    setStartAfterDoc(lastVisible);
+
     const q = query(
       corporationRef,
       orderBy("revenue", "desc"),
-      startAfter(lastVisible),
+      startAfter(prevRange[page][1]),
       limit(ITEM_SIZE_PER_PAGE)
     );
 
-    setPrevQuery(
-      query(
-        corporationRef,
-        orderBy("revenue", "desc"),
-        endBefore(firstDocument),
-        limit(ITEM_SIZE_PER_PAGE)
-      )
-    );
-
     getDocs(q)
-      .then((newQuerySnapshot) => {
-        setQuerySnapshot(newQuerySnapshot);
-        newQuerySnapshot.forEach((doc) => {
-          console.log("doc.data()", doc.data());
-          newCorporations.push(doc.data());
+      .then((docSnapshots) => {
+        setPrevRange({
+          ...prevRange,
+          [page + 1]: [
+            docSnapshots.docs[0],
+            docSnapshots.docs[docSnapshots.docs.length - 1],
+          ],
         });
-        setCorporations(newCorporations);
-        setPage((page) => ++page);
+        if (!docSnapshots.empty) {
+          docSnapshots.forEach((doc) => {
+            newCorporations.push(doc.data());
+          });
+          setCorporations(newCorporations);
+          setPage((page) => ++page);
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -98,15 +97,20 @@ export default function CorporationIndex({ phrase }) {
   };
 
   const handlePrevClick = async () => {
-    await getDocs(prevQuery).then((newQuerySnapshot) => {
-      const newCorporations = [];
-      setQuerySnapshot(newQuerySnapshot);
-      newQuerySnapshot.forEach((doc) => {
-        newCorporations.push(doc.data());
-      });
-      setCorporations(newCorporations);
-      setPage((page) => --page);
+    const newCorporations = [];
+    const q = query(
+      corporationRef,
+      orderBy("revenue", "desc"),
+      startAt(prevRange[page - 1][0]),
+      endAt(prevRange[page - 1][1]),
+      limit(ITEM_SIZE_PER_PAGE)
+    );
+    const docSnapshots = await getDocs(q);
+    docSnapshots.forEach((doc) => {
+      newCorporations.push(doc.data());
     });
+    setCorporations(newCorporations);
+    setPage((page) => --page);
   };
 
   const filteredCopoerations = corporations.filter((board) =>
