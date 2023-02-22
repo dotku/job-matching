@@ -16,6 +16,7 @@ import KBVISA from "./components/knowledge-base/visa";
 import NotFound from "./components/NotFound";
 import AdminCorporations from "./page/Admin/AdminCorporations";
 import Terms from "./page/Terms";
+import DemoModal from "./components/common/DemoModal";
 
 function App() {
   const [phrase, setPhrase] = useState("");
@@ -35,6 +36,9 @@ function App() {
               </Route>
               <Route path="/admin/corporations">
                 <AdminCorporations phrase={phrase} />
+              </Route>
+              <Route path="/demo/modal">
+                <DemoModal />
               </Route>
               <Route path="/talents">
                 <Talents phrase={phrase} />

@@ -8,12 +8,27 @@ import {
   endAt,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
+import styled from "styled-components";
 import PayPalButton from "../common/PaypalButton";
+import PaypalModal from "../common/PaypalModal";
+import PayPalModal from "../common/PaypalModal";
 import WithErrorContent from "../common/WithErrorContent";
 import { CorporationCard } from "./CorporationCard";
 import { corporationRef } from "./CorporationJobBoards";
 
 const ITEM_SIZE_PER_PAGE = 12;
+const StyledButton = styled.button`
+  &.btn-outline-dark {
+    border-color: #212529;
+  }
+  &.btn-outline-dark:disabled {
+    border-color: #6c757d;
+  }
+  &.btn-outline-dark:hover {
+    color: white;
+  }
+`;
 
 export default function CorporationIndex({ phrase }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +38,7 @@ export default function CorporationIndex({ phrase }) {
   const [corporations, setCorporations] = useState([]);
   // const [ifSortByRenvue, setIfSortByRevnue] = useState(false);
   const [prevRange, setPrevRange] = useState({});
+  const [showPayPalModal, setShowPayPalModal] = useState(false);
 
   useEffect(() => {
     async function effectQuery() {
@@ -61,6 +77,10 @@ export default function CorporationIndex({ phrase }) {
     }
     effectQuery();
   }, []);
+
+  const handlePayPalModalClose = () => {
+    setShowPayPalModal(false);
+  };
 
   const handleNextClick = () => {
     const newCorporations = [];
@@ -141,21 +161,21 @@ export default function CorporationIndex({ phrase }) {
           </button> */}
         </div>
         <div>
-          <button
+          <StyledButton
             className="btn btn-outline-dark ms-1"
             onClick={handlePrevClick}
             disabled={page <= 1}
           >
             Prev
-          </button>
+          </StyledButton>
 
-          <button
+          <StyledButton
             className="btn btn-outline-dark ms-1"
-            onClick={handleNextClick}
+            onClick={() => setShowPayPalModal(true)}
             disabled={page >= Math.floor(total / ITEM_SIZE_PER_PAGE)}
           >
             Next
-          </button>
+          </StyledButton>
         </div>
       </div>
       {isLoading ? (
@@ -171,7 +191,11 @@ export default function CorporationIndex({ phrase }) {
           </div>
         </WithErrorContent>
       )}
-      <PayPalButton />
+      <PaypalModal
+        show={showPayPalModal}
+        handleClose={handlePayPalModalClose}
+      />
+
       {/* <h3>Reference</h3>
       <a href="https://companiesmarketcap.com/professional-services/largest-professional-service-companies-by-market-cap/">
         https://companiesmarketcap.com/professional-services/largest-professional-service-companies-by-market-cap/
