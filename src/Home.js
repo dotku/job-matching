@@ -5,10 +5,17 @@ import CorporationStaffing from "./components/Corporation/CorporationStaffing";
 import Events from "./components/Events";
 import ChildDependHeightAligner from "./components/common/ChildDependHeightAligner";
 import Insight from "./components/Tips";
+import TermsSection from "./page/Terms/TermsSection";
+import { Helmet } from "react-helmet";
+
+const { REACT_APP_WEBSITE_NAME } = process.env;
 
 export function Home({ phrase }) {
   return (
     <>
+      <Helmet>
+        <title>{REACT_APP_WEBSITE_NAME}</title>
+      </Helmet>
       <ChildDependHeightAligner>
         <div className="row">
           <div className="col-12 col-sm-6">
@@ -24,6 +31,7 @@ export function Home({ phrase }) {
       <Jobs phrase={phrase} />
       <JobBoards phrase={phrase} />
       <CorporationStaffing phrase={phrase} />
+      <TermsSection />
     </>
   );
 }
