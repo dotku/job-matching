@@ -15,13 +15,14 @@ import { Home } from "./Home";
 import KBVISA from "./components/knowledge-base/visa";
 import NotFound from "./components/NotFound";
 import AdminCorporations from "./page/Admin/AdminCorporations";
+import Terms from "./page/Terms";
 
 function App() {
   const [phrase, setPhrase] = useState("");
   let handlePhraseChange = (e) => {
-    console.log(e.target.value);
     setPhrase(e.target.value);
   };
+
   return (
     <Router>
       <div className="App">
@@ -47,6 +48,7 @@ function App() {
               <Route path="/resume" component={Resume} />
               <Route path="/careerAI" component={CareerAI} />
               <Route path="/knowledge-base/visa" component={KBVISA} />
+              <Route path="/terms" component={Terms} />
               <Route
                 path="/bootstrap-lab/tooltip"
                 component={BootStrapLabTooltip}

@@ -30,7 +30,7 @@ export function Talents(props) {
                 >
                   <div className="d-flex justify-content-center align-items-center">
                     <i
-                      className="bi bi-person-fill h2 mb-0"
+                      className="bi bi-person-fill h2 m-0"
                       style={{ lineHeight: "52px" }}
                     ></i>
                   </div>
