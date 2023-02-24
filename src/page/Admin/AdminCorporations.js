@@ -46,6 +46,16 @@ const columns = [
       }).format(cell),
   },
   {
+    text: "Jobs",
+    dataField: "jobsNumber",
+    sort: true,
+    formatter: (cell) =>
+      cell &&
+      new Intl.NumberFormat("en", {
+        notation: "compact",
+      }).format(cell),
+  },
+  {
     text: "description",
     dataField: "description",
     formatter: (cell) => <div style={{ maxWidth: 300 }}>{cell}</div>,
@@ -60,10 +70,12 @@ export default function CorporationIndex({ phrase }) {
   const [corporations, setCorporations] = useState([]);
   // const [ifSortByRenvue, setIfSortByRevnue] = useState(false);
   const [prevRange, setPrevRange] = useState({});
+  const [totalJobs, setTotalJobs] = useState(0);
 
   useEffect(() => {
     async function effectQuery() {
       const newCorporations = [];
+      let totalJobs = 0;
 
       try {
         getDocs(corporationRef)
@@ -82,15 +94,25 @@ export default function CorporationIndex({ phrase }) {
             docSnapshots.docs[docSnapshots.docs.length - 1],
           ],
         });
+        // console.log("docSnapshots.docs()", docSnapshots.docs());
+
         docSnapshots.forEach((doc) => {
-          newCorporations.push(doc.data());
+          const data = doc.data();
+          newCorporations.push({
+            id: doc.id,
+            ...data,
+          });
+          if (typeof data.jobsNumber !== "undefined")
+            totalJobs += data.jobsNumber;
         });
       } catch (e) {
         console.error(e);
         setError(e);
       }
+      console.log("newCorporations", newCorporations);
       setCorporations(newCorporations);
       setIsLoading(false);
+      setTotalJobs(totalJobs);
     }
     effectQuery();
   }, []);
@@ -159,6 +181,12 @@ export default function CorporationIndex({ phrase }) {
   return (
     <div>
       <h2>Corporations</h2>
+      <div className="h3">
+        Total Jobs:{" "}
+        {new Intl.NumberFormat("en", {
+          notation: "compact",
+        }).format(totalJobs)}
+      </div>
       <div className="d-flex justify-content-between">
         <div>
           Page: {page} / {Math.floor(total / ITEM_SIZE_PER_PAGE)}
@@ -197,7 +225,7 @@ export default function CorporationIndex({ phrase }) {
         <div className="row my-3">
           {results.length ? (
             <BootstrapTable
-              keyField="name"
+              keyField="id"
               data={corporations}
               columns={columns}
             />

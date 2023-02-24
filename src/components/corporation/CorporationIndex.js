@@ -39,6 +39,7 @@ export default function CorporationIndex({ phrase }) {
   // const [ifSortByRenvue, setIfSortByRevnue] = useState(false);
   const [prevRange, setPrevRange] = useState({});
   const [showPayPalModal, setShowPayPalModal] = useState(false);
+  const [totalJobs, setTotalJobs] = useState(0);
 
   useEffect(() => {
     async function effectQuery() {
