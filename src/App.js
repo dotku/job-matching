@@ -11,7 +11,7 @@ import BootStrapLabTooltip from "./components/bootstrap-lab";
 import Resume from "./components/resume";
 import CareerAI from "./components/careerAI";
 import CorporationCreate from "./components/Corporation/CorporationCreate";
-import { Home } from "./Home";
+import Home from "./page/Home";
 import KBVISA from "./components/knowledge-base/visa";
 import NotFound from "./components/NotFound";
 import AdminCorporations from "./page/Admin/AdminCorporations";
@@ -29,7 +29,7 @@ function App() {
       <div className="App">
         <div className="container" style={{ minHeight: "calc(100vh - 239px)" }}>
           <Header phrase={phrase} handlePhraseChange={handlePhraseChange} />
-          <div className="container">
+          <div>
             <Switch>
               <Route exact path="/">
                 <Home phrase={phrase} />

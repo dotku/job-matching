@@ -1,12 +1,13 @@
-import { Talents } from "./components/user/Talents";
-import Jobs from "./components/job/JobIndex";
-import JobBoards from "./components/Corporation/CorporationJobBoards";
-import CorporationStaffing from "./components/Corporation/CorporationStaffing";
-import Events from "./components/Events";
-import ChildDependHeightAligner from "./components/common/ChildDependHeightAligner";
-import Insight from "./components/Tips";
-import TermsSection from "./page/Terms/TermsSection";
+import { Talents } from "../../components/user/Talents";
+import Jobs from "../../components/job/JobIndex";
+import JobBoards from "../../components/Corporation/CorporationJobBoards";
+import CorporationStaffing from "../../components/Corporation/CorporationStaffing";
+import Events from "../../components/Events";
+import ChildDependHeightAligner from "../../components/common/ChildDependHeightAligner";
+import Insight from "../../components/Tips";
+import TermsSection from "../Terms/TermsSection";
 import { Helmet } from "react-helmet";
+import Hero from "./Hero";
 
 const { REACT_APP_WEBSITE_NAME } = process.env;
 
@@ -16,6 +17,7 @@ export function Home({ phrase }) {
       <Helmet>
         <title>{REACT_APP_WEBSITE_NAME}</title>
       </Helmet>
+      <Hero />
       <ChildDependHeightAligner>
         <div className="row">
           <div className="col-12 col-sm-6">
@@ -26,7 +28,6 @@ export function Home({ phrase }) {
           </div>
         </div>
       </ChildDependHeightAligner>
-
       <Talents phrase={phrase} />
       <Jobs phrase={phrase} />
       <JobBoards phrase={phrase} />
