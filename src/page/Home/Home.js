@@ -28,7 +28,7 @@ export function Home({ phrase }) {
           </div>
         </div>
       </ChildDependHeightAligner>
-      <Talents phrase={phrase} />
+      {/* <Talents phrase={phrase} /> */}
       <Jobs phrase={phrase} />
       <JobBoards phrase={phrase} />
       <CorporationStaffing phrase={phrase} />
