@@ -17,6 +17,7 @@ import NotFound from "./components/NotFound";
 import AdminCorporations from "./page/Admin/AdminCorporations";
 import Terms from "./page/Terms";
 import DemoModal from "./components/common/DemoModal";
+import Pricing from "./page/Pricing";
 
 function App() {
   const [phrase, setPhrase] = useState("");
@@ -53,6 +54,7 @@ function App() {
               <Route path="/careerAI" component={CareerAI} />
               <Route path="/knowledge-base/visa" component={KBVISA} />
               <Route path="/terms" component={Terms} />
+              <Route path="/pricing" component={Pricing} />
               <Route
                 path="/bootstrap-lab/tooltip"
                 component={BootStrapLabTooltip}
