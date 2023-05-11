@@ -6,7 +6,6 @@ const footerStyles = makeStyles({
   root: {
     background: "#333",
     border: 0,
-    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
     color: "white",
     padding: "30px",
     "& a": {
@@ -91,12 +90,17 @@ export default function Footer({ classNames }) {
             <ul>
               <li>Welcome to fork and submit pull request.</li>
               <li>
-                Email me if you want to join the team <a href="mailto:jobmatching2023@gmail.com">jobmatching2023(at)gmail.com</a>
+                Email me if you want to join the team{" "}
+                <a href="mailto:jobmatching2023@gmail.com">
+                  jobmatching2023(at)gmail.com
+                </a>
               </li>
             </ul>
           </div>
         </div>
-        <small className="d-block small text-center">Copyrights &copy; 2019 - 2023</small>
+        <small className="d-block small text-center">
+          Copyrights &copy; 2019 - 2023
+        </small>
       </div>
     </footer>
   );

@@ -28,7 +28,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <div className="container" style={{ minHeight: "calc(100vh - 239px)" }}>
+        <div className="container" style={{ minHeight: "calc(100vh - 237px)" }}>
           <Header phrase={phrase} handlePhraseChange={handlePhraseChange} />
           <div>
             <Switch>
