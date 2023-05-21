@@ -20,6 +20,7 @@ import DemoModal from "./components/common/DemoModal";
 import Pricing from "./page/Pricing";
 import Registration from "./page/Auth/Registration";
 import IndustryFinance from "./page/Industry/Finance";
+import TOCWorkLifeBalance from "./page/Publication/Work Life Balance: I already chat with ChatGPT, so you don't have to";
 
 export const AppContext = createContext();
 
@@ -72,6 +73,11 @@ function App() {
                 <Route path="/knowledge-base/visa" component={KBVISA} />
                 <Route path="/terms" component={Terms} />
                 <Route path="/pricing" component={Pricing} />
+                <Route path="/publication" component={TOCWorkLifeBalance} />
+                <Route
+                  path="/publication/work-life-balance"
+                  component={TOCWorkLifeBalance}
+                />
                 <Route
                   path="/bootstrap-lab/tooltip"
                   component={BootStrapLabTooltip}

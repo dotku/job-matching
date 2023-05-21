@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import financeCompanies from "./data/financeCompanies";
 import { useContext, useMemo } from "react";
-import { AppContext } from "../../App";
+import { AppContext } from "../../../App";
 
 const StyledLabel = styled.label`
   font-weight: 600;
@@ -39,8 +39,8 @@ export default function IndustryFinance() {
       </form>
       <h3>Companies ({companies.length})</h3>
       <div className="row">
-        {companies.map((company) => (
-          <div className="col-md-4">
+        {companies.map((company, idx) => (
+          <div className="col-md-4" key={idx}>
             <div className="card mb-3">
               <div className="card-body">
                 <h3 className="card-title">
@@ -87,6 +87,8 @@ export default function IndustryFinance() {
           </div>
         ))}
       </div>
+      <h3>News</h3>
+      <h3>Stock</h3>
     </>
   );
 }
