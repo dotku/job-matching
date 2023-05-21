@@ -19,6 +19,7 @@ import Terms from "./page/Terms";
 import DemoModal from "./components/common/DemoModal";
 import Pricing from "./page/Pricing";
 import Registration from "./page/Auth/Registration";
+import IndustryFinance from "./page/Industry/Finance";
 
 function App() {
   const [phrase, setPhrase] = useState("");
@@ -51,6 +52,7 @@ function App() {
               <Route path="/corporations">
                 <CorporationIndex phrase={phrase} />
               </Route>
+              <Route path="/industry/finance" component={IndustryFinance} />
               <Route path="/corporation/create" component={CorporationCreate} />
               <Route path="/job/:id" component={JobDetail} />
               <Route path="/story/social" component={Social} />
