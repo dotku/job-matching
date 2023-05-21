@@ -41,6 +41,11 @@ export default function Footer({ classNames }) {
               <li>
                 <a href="https://www.dice.com/">Dice</a>
               </li>
+              <li>
+                <a href="https://www.sfhsa.org/services/jobs/jobsnow">
+                  JobsNow!
+                </a>
+              </li>
             </ul>
           </div>
           <div className="col-md-3 col-xs-6">
@@ -88,7 +93,13 @@ export default function Footer({ classNames }) {
           <div className="col-md-3">
             <div>Join Us</div>
             <ul>
-              <li>Welcome to fork and submit pull request.</li>
+              <li>
+                Welcome to{" "}
+                <a href="https://github.com/dotku/job-matching">
+                  fork and submit pull request
+                </a>
+                .
+              </li>
               <li>
                 Email me if you want to join the team{" "}
                 <a href="mailto:jobmatching2023@gmail.com">

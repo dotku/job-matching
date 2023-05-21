@@ -31,20 +31,26 @@ export default function Events() {
       {results && results.length
         ? results
             .filter((_item, idx) => idx === 0)
-            .map((item, idx) => (
+            .map(({ url, imgSrc, title, subtitle }, idx) => (
               <div className="card mb-3" key={idx}>
-                <a href={item.url}>
-                  <img
-                    className="card-img-top"
-                    src={item.imgSrc}
-                    alt={item.title}
-                  />
+                <a href={url}>
+                  <img className="card-img-top" src={imgSrc} alt={title} />
                 </a>
-                <div className="card-body text-center">
-                  <h3 className="card-title">{item.title}</h3>
-                  <a href={item.url} className="btn btn-primary">
-                    Register
-                  </a>
+                <div className="card-body">
+                  <h3 className="card-title">{title}</h3>
+                  {subtitle ? (
+                    <h6 class="card-subtitle mb-2 text-muted">{subtitle}</h6>
+                  ) : null}
+                  <div className="text-right">
+                    <a
+                      href={url}
+                      className="btn btn-primary"
+                      target="_blank"
+                      rel="external noreferrer"
+                    >
+                      Enter
+                    </a>
+                  </div>
                 </div>
               </div>
             ))
