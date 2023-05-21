@@ -21,7 +21,7 @@ export default function Footer({ classNames }) {
       <div className="container">
         <div className="row">
           <div className="col-md-3 col-xs-6">
-            <div>Job Boards</div>
+            <h3>Job Boards</h3>
             <ul>
               <li>
                 <a href="https://hired.com/x/1cebk">Hired</a>
@@ -48,8 +48,8 @@ export default function Footer({ classNames }) {
               </li>
             </ul>
           </div>
-          <div className="col-md-3 col-xs-6">
-            <div>Interview Preperation</div>
+          <div className="col-md-3 col-xs-12">
+            <h3>Interview Preperation</h3>
             <ul>
               <li>
                 <a href="http://interviewcake.com">InterviewCake</a>
@@ -66,7 +66,7 @@ export default function Footer({ classNames }) {
             </ul>
           </div>
           <div className="col-md-3">
-            <div>Agents</div>
+            <h3>Agents</h3>
             <ul>
               <li>
                 <a href="https://www.teksystems.com/en">TEKSystems</a>
@@ -91,7 +91,7 @@ export default function Footer({ classNames }) {
             </ul>
           </div>
           <div className="col-md-3">
-            <div>Join Us</div>
+            <h3>Join Us</h3>
             <ul>
               <li>
                 Welcome to{" "}
