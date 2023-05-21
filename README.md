@@ -46,7 +46,7 @@ filter the content.
 
 ## GTD
 
-- Improve the footer modules on agents
+[ ] Import oppotunties from [San Francisco Partners](https://sfcitypartner.sfgov.org/pages/Events-BS3/partner-request/view-all-requests.aspx)
 
 ### References
 
