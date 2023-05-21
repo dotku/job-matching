@@ -18,6 +18,7 @@ import AdminCorporations from "./page/Admin/AdminCorporations";
 import Terms from "./page/Terms";
 import DemoModal from "./components/common/DemoModal";
 import Pricing from "./page/Pricing";
+import Registration from "./page/Auth/Registration";
 
 function App() {
   const [phrase, setPhrase] = useState("");
@@ -37,6 +38,9 @@ function App() {
               </Route>
               <Route path="/admin/corporations">
                 <AdminCorporations phrase={phrase} />
+              </Route>
+              <Route path="/auth/registration">
+                <Registration />
               </Route>
               <Route path="/demo/modal">
                 <DemoModal />
