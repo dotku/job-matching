@@ -8,11 +8,12 @@ const financeCompanies = [
     location: "San Francisco, CA",
     founded: 2006,
     revenue: {
-      2022: 1200000000000,
+      2022: 1200000000,
     },
   },
   {
     name: "SoFi",
+    weight: 1,
     url: "https://www.sofi.com/invite/money?gcp=2ed7fd1b-42f0-4b3d-a44e-3a793908b3e7&isAliasGcp=false",
     logo: "https://www.sofi.com/wp-content/themes/sofi/img/logo.svg",
     description:
@@ -32,7 +33,7 @@ const financeCompanies = [
     location: "San Francisco, CA",
     founded: 2012,
     revenue: {
-      2022: 1300000000000,
+      2022: 1300000000,
     },
   },
   {
@@ -190,6 +191,22 @@ const financeCompanies = [
     founded: 1958,
     revenue: {
       2022: 25000000000,
+    },
+  },
+  {
+    name: "Robinhood",
+    url: "https://join.robinhood.com/weijinl2",
+    weight: 1,
+    logo: "https://cdn.robinhood.com/assets/generated_assets/6d2d3d3d0e1e4e1e8d2d3d3d0e1e4e1e/assets/robinhood-logo-dark.svg",
+    description:
+      "Robinhood is a commission-free, online securities brokerage. Robinhood is democratizing access to America’s financial system. Robinhood is a FINRA-approved broker-dealer, registered with the U.S. Securities and Exchange Commission, and is a member of the Securities Investor Protection Corporation.",
+    location: "Menlo Park, CA",
+    founded: 2013,
+    revenue: {
+      2022: 1360000000,
+    },
+    valuation: {
+      2022: 20000000000,
     },
   },
 ];

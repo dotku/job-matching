@@ -21,6 +21,7 @@ import Pricing from "./page/Pricing";
 import Registration from "./page/Auth/Registration";
 import IndustryFinance from "./page/Industry/Finance";
 import TOCWorkLifeBalance from "./page/Publication/Work Life Balance: I already chat with ChatGPT, so you don't have to";
+import Industry from "./page/Industry/Industry";
 
 export const AppContext = createContext();
 
@@ -61,7 +62,11 @@ function App() {
                 <Route path="/corporations">
                   <CorporationIndex phrase={phrase} />
                 </Route>
-                <Route path="/industry/finance" component={IndustryFinance} />
+                <Route path="/industry" component={Industry} exact={true} />
+                <Route
+                  path="/industry/financials"
+                  component={IndustryFinance}
+                />
                 <Route
                   path="/corporation/create"
                   component={CorporationCreate}
