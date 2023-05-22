@@ -13,7 +13,7 @@ const financeCompanies = [
   },
   {
     name: "SoFi",
-    url: "https://www.sofi.com/",
+    url: "https://www.sofi.com/invite/money?gcp=2ed7fd1b-42f0-4b3d-a44e-3a793908b3e7&isAliasGcp=false",
     logo: "https://www.sofi.com/wp-content/themes/sofi/img/logo.svg",
     description:
       "SoFi is a digital personal finance company whose mission is to help people achieve financial independence to realize their ambitions—whether that be to buy a house one day, start a family on their own terms or be debt free. We aim to be at the center of our members’ financial lives, and to help every member Get Their Money Right®.",
