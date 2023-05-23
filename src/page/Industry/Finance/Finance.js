@@ -24,8 +24,6 @@ export default function IndustryFinance() {
       : financeCompanies;
   }, [appState?.phrase]);
 
-  console.log(companies.sort((a, b) => (!b.weight ? -1 : a.weight - b.weight)));
-
   return (
     <>
       <h2>Financials</h2>

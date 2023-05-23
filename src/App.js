@@ -22,6 +22,7 @@ import Registration from "./page/Auth/Registration";
 import IndustryFinance from "./page/Industry/Finance";
 import TOCWorkLifeBalance from "./page/Publication/Work Life Balance: I already chat with ChatGPT, so you don't have to";
 import Industry from "./page/Industry/Industry";
+import InformationTechnology from "./page/Industry/InformationTechnology";
 
 export const AppContext = createContext();
 
@@ -66,6 +67,10 @@ function App() {
                 <Route
                   path="/industry/financials"
                   component={IndustryFinance}
+                />
+                <Route
+                  path="/industry/information-technology"
+                  component={InformationTechnology}
                 />
                 <Route
                   path="/corporation/create"
