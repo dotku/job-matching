@@ -1,20 +1,19 @@
 import { paramCase } from "param-case";
-import { NAICS } from "./data";
+import { NAICS, GICSData } from "./data";
+import styled from "styled-components";
+
+const ListWrapper = styled.div`
+  & ol {
+    counter-reset: item;
+    list-style: none;
+  }
+  & li:before {
+    counter-increment: item;
+    content: counters(item, ".") ". ";
+  }
+`;
 
 export default function Industry() {
-  const GICSData = [
-    { name: "Energy", ifURL: false },
-    { name: "Materials", ifURL: false },
-    { name: "Industrials", ifURL: false },
-    { name: "Utilities", ifURL: false },
-    { name: "Healthcare", ifURL: false },
-    { name: "Financials", ifURL: true },
-    { name: "Consumer Discretionary", ifURL: false },
-    { name: "Consumer Staples", ifURL: false },
-    { name: "Information Technology", ifURL: true },
-    { name: "Communication Services", ifURL: false },
-    { name: "Real Estate", ifURL: false },
-  ];
   return (
     <>
       <h2>Industry</h2>
@@ -31,18 +30,37 @@ export default function Industry() {
         industries, 25 Industry groups, 74 industries and 163 sub-industries.
         They are:
       </p>
-
-      <ol>
-        {GICSData.map(({ name, ifURL }, idx) => (
-          <li key={idx}>
-            {ifURL ? (
-              <a href={`#/industry/${paramCase(name)}`}>{name}</a>
-            ) : (
-              name
-            )}
-          </li>
-        ))}
-      </ol>
+      <ListWrapper>
+        <ol>
+          {GICSData.map((item, idx) => (
+            <li key={idx}>
+              {item.ifURL ? (
+                <a href={`#/industry/${paramCase(item["Sector Name"])}`}>
+                  {item["Sector Name"]}
+                </a>
+              ) : (
+                item["Sector Name"]
+              )}
+              <ol>
+                {item["Industry Groups"]?.length &&
+                  item["Industry Groups"].map(
+                    (group, gidx) => (
+                      <li key={gidx}>{group["Industry Group Name"]}</li>
+                    )
+                    // <a
+                    //   key={idx}
+                    //   href={`#/industry/${paramCase(
+                    //     group["Industry Groups Name"]
+                    //   )}`}
+                    // >
+                    //   {group["Industry Groups Name"]}
+                    // </a>
+                  )}
+              </ol>
+            </li>
+          ))}
+        </ol>
+      </ListWrapper>
 
       <p>
         But according to <a href="https://www.census.gov/naics/">NAICS</a>{" "}
