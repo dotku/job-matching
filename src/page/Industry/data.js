@@ -360,6 +360,7 @@ export const GICSData = [
   {
     Sector: "40",
     "Sector Name": "Financials",
+    ifURL: true,
     "Industry Groups": [
       {
         "Industry Group": "4010",
@@ -396,6 +397,7 @@ export const GICSData = [
       {
         "Industry Group": "4030",
         "Industry Group Name": "Insurance",
+        ifURL: true,
         Industries: [
           {
             Industry: "403010",
@@ -408,6 +410,7 @@ export const GICSData = [
   {
     Sector: "45",
     "Sector Name": "Information Technology",
+    ifURL: true,
     "Industry Groups": [
       {
         "Industry Group": "4510",
