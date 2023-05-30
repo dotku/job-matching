@@ -46,7 +46,7 @@ filter the content.
 
 ## GTD
 
-[ ] US Banks/Financial Groups Study
+[ ] US Banks/Financial Groups Study  
 [ ] Import oppotunties from [San Francisco Partners](https://sfcitypartner.sfgov.org/pages/Events-BS3/partner-request/view-all-requests.aspx)
 
 ### References
