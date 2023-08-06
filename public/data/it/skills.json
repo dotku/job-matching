@@ -1,74 +1,198 @@
-[
-  {
-    name: "Application Development and Maintenance",
-    children: [
-      name: "Integrations",
-      name: "Web Development",
-      name: "Java",
-      name: "Mobile Applications",
-      name: "Library",
-      name: "Front end",
-      name: "Application Development",
-      name: "Programming Language",
-      name: "Mainframe",
-      name: "Collaboration and Communication",
-      name: ".NET",
-      name: "Scripting and Automation",
-      name: "Application Architecture",
-      name: "Application Lifecycle Management",
-      name: "Application Maintainance & Incident Management",
-      name: "API Management",
-      name: "Back End",
-      name: "Message Queue",
-      name: "Notification Service",
-      name: "Python",
-      name: "IDE",
-      name: "Lifecycle Management",
-      name: "Service Discovery",
-      name: "Source Code Management and Version Control",
-      name: "Application Performance Monitoring",
-      name: "Web Framework",
-      name: "Low-code/No-code",
-      name: "Development, Debugging and Build Tools",
-      name: "PHP",
-      name: "Framework",
-      name: "JavaScript",
-      name: "Insurance",
-      name: "Service Mesh",
-      name: "Workflow Management",
-      name: "Supply Chain Management",
-    ]
-  },
-  {
-    name: "Data and Analytics",
-  },
-  
-  {name: "Enterprise and SaaS Softwares"},
-  {name: "Cloud"},
-  {name: "Infrastructure"},
-  {name: "Other"},
-  {name: "Project Management Competencies"},
-  {name: "Banking and Financial Services"},
-  {name: "Sales and Marketing"},
-  {name: "Technical Competencies"},
-  {name: "Others"},
-  {name: "Analytics and Data Science"},
-  {name: "Application Development and Maintainance"},
-  {name: "BPO / BPM"},
-  {name: "Conceptual Skills"},
-  {name: "Cybersecurity"},
-  {name: "Digital"},
-  {name: "Enterprise Applications"},
-  {name: "Functional Skills"},
-  {name: "GIS"},
-  {name: "Healthcare and Life Sciences"},
-  {name: "Infrastructure Management"},
-  {name: "IoT"},
-  {name: "Product Engineering"},
-  {name: "Quality Assurance"},
-  {name: "Robotics and Automation"},
-  {name: "Security"},
-  {name: "Testing and Quality Assurance"},
-  {name: "Tools"},
-  {name: "Web3"},
+[{
+		"name": "Application Development and Maintenance",
+		"children": [{
+				"name": "Integrations"
+			},
+			{
+				"name": "Web Development"
+			},
+			{
+				"name": "Java"
+			},
+			{
+				"name": "Mobile Applications"
+			},
+			{
+				"name": "Library"
+			},
+			{
+				"name": "Front end"
+			},
+			{
+				"name": "Application Development"
+			},
+			{
+				"name": "Programming Language"
+			},
+			{
+				"name": "Mainframe"
+			},
+			{
+				"name": "Collaboration and Communication"
+			},
+			{
+				"name": ".NET"
+			},
+			{
+				"name": "Scripting and Automation"
+			},
+			{
+				"name": "Application Architecture"
+			},
+			{
+				"name": "Application Lifecycle Management"
+			},
+			{
+				"name": "Application Maintainance & Incident Management"
+			},
+			{
+				"name": "API Management"
+			},
+			{
+				"name": "Back End"
+			},
+			{
+				"name": "Message Queue"
+			},
+			{
+				"name": "Notification Service"
+			},
+			{
+				"name": "Python"
+			},
+			{
+				"name": "IDE"
+			},
+			{
+				"name": "Lifecycle Management"
+			},
+			{
+				"name": "Service Discovery"
+			},
+			{
+				"name": "Source Code Management and Version Control"
+			},
+			{
+				"name": "Application Performance Monitoring"
+			},
+			{
+				"name": "Web Framework"
+			},
+			{
+				"name": "Low-code/No-code"
+			},
+			{
+				"name": "Development, Debugging and Build Tools"
+			},
+			{
+				"name": "PHP"
+			},
+			{
+				"name": "Framework"
+			},
+			{
+				"name": "JavaScript"
+			},
+			{
+				"name": "Insurance"
+			},
+			{
+				"name": "Service Mesh"
+			},
+			{
+				"name": "Workflow Management"
+			},
+			{
+				"name": "Supply Chain Management"
+			}
+		]
+	},
+	{
+		"name": "Data and Analytics"
+	},
+
+	{
+		"name": "Enterprise and SaaS Softwares"
+	},
+	{
+		"name": "Cloud"
+	},
+	{
+		"name": "Infrastructure"
+	},
+	{
+		"name": "Other"
+	},
+	{
+		"name": "Project Management Competencies"
+	},
+	{
+		"name": "Banking and Financial Services"
+	},
+	{
+		"name": "Sales and Marketing"
+	},
+	{
+		"name": "Technical Competencies"
+	},
+	{
+		"name": "Others"
+	},
+	{
+		"name": "Analytics and Data Science"
+	},
+	{
+		"name": "Application Development and Maintainance"
+	},
+	{
+		"name": "BPO / BPM"
+	},
+	{
+		"name": "Conceptual Skills"
+	},
+	{
+		"name": "Cybersecurity"
+	},
+	{
+		"name": "Digital"
+	},
+	{
+		"name": "Enterprise Applications"
+	},
+	{
+		"name": "Functional Skills"
+	},
+	{
+		"name": "GIS"
+	},
+	{
+		"name": "Healthcare and Life Sciences"
+	},
+	{
+		"name": "Infrastructure Management"
+	},
+	{
+		"name": "IoT"
+	},
+	{
+		"name": "Product Engineering"
+	},
+	{
+		"name": "Quality Assurance"
+	},
+	{
+		"name": "Robotics and Automation"
+	},
+	{
+		"name": "Security"
+	},
+	{
+		"name": "Testing and Quality Assurance"
+	},
+	{
+		"name": "Tools"
+	},
+	{
+		"name": "Web3"
+	}
 ]
