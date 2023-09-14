@@ -54,7 +54,24 @@ filter the content.
 [ ] US Banks/Financial Groups Study  
 [ ] Import oppotunties from [San Francisco Partners](https://sfcitypartner.sfgov.org/pages/Events-BS3/partner-request/view-all-requests.aspx)
 
-### References
+## References
+
+### Job Source
+
+- [https://www.myopt.org/](https://www.myopt.org/)
+- [https://www.howlifeusa.com/job-search-websites/](https://www.howlifeusa.com/job-search-websites/)
+- [https://mentorx.net/](https://mentorx.net/)
+- [https://haiwaisky.com/best-job-websites/](https://haiwaisky.com/best-job-websites/)
+- [https://www.dealmoon.com/guide/933087](https://www.dealmoon.com/guide/933087)
+- [https://yycams.com/best-job-search-websites/](https://yycams.com/best-job-search-websites/)
+- [https://www.chineselikela.com/cash/work/1113/](https://www.chineselikela.com/cash/work/1113/)
+- [https://www.zhihu.com/question/23013690](https://www.zhihu.com/question/23013690)
+- [https://zhuanlan.zhihu.com/p/548448377](https://zhuanlan.zhihu.com/p/548448377)
+- [https://www.chineselikela.com/cash/work/19062/](https://www.chineselikela.com/cash/work/19062/)
+- [https://www.qingdan.nyc/blog/website-you-need-when-looking-for-a-job](https://www.qingdan.nyc/blog/website-you-need-when-looking-for-a-job)
+- 
+
+### Rest
 
 - [https://landkit.goodthemes.co/](https://landkit.goodthemes.co/)
 - [https://www.cuebit.ai/startups_still_hiring](https://www.cuebit.ai/startups_still_hiring)
