@@ -1,4 +1,4 @@
-# react-job-matching
+# job-matching
 
 A private place for job hunter. Let's have a date :)
 
