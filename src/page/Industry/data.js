@@ -112,6 +112,7 @@ export const GICSData = [
   {
     Sector: "20",
     "Sector Name": "Industrials",
+    ifURL: true,
     "Industry Groups": [
       {
         "Industry Group": "2010",
