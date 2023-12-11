@@ -24,6 +24,7 @@ import TOCWorkLifeBalance from "./page/Publication/Work Life Balance: I already 
 import Industry from "./page/Industry/Industry";
 import InformationTechnology from "./page/Industry/InformationTechnology";
 import IndustrialsSector from "./page/Industry/Industrials/IndustrialsSector";
+import ResumeFineTuner from "./page/Toolbox/ResumeFineTuner/ResumeFineTuner";
 
 export const AppContext = createContext();
 
@@ -54,6 +55,9 @@ function App() {
                 </Route>
                 <Route path="/auth/registration">
                   <Registration />
+                </Route>
+                <Route path="/toolbox/resume-fine-tuner">
+                  <ResumeFineTuner />
                 </Route>
                 <Route path="/demo/modal">
                   <DemoModal />
