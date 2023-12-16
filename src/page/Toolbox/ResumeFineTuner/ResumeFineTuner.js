@@ -53,8 +53,15 @@ export default function ResumeFineTuner() {
         <JMEdtior ref={refResumeInput} />
       </div>
       <button className="btn btn-primary" onClick={handleGenNewResumeClick}>
-        Generate New Resume
+        Improved Resume By AI
       </button>
+      <a
+        className="btn btn-primary"
+        title="click here to apply to be our resume auditing agent email or text (415)851-1937"
+        href="mailto:jaytech202307@gmail.com"
+      >
+        Improved Resume By Human
+      </a>
       <div className="my-5">
         {ifProcessing ? (
           <span>processing...</span>
