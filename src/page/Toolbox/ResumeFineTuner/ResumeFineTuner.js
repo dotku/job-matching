@@ -56,8 +56,8 @@ export default function ResumeFineTuner() {
         Improved Resume By AI
       </button>
       <a
-        className="btn btn-primary"
-        title="click here to apply to be our resume auditing agent email or text (415)851-1937"
+        className="btn btn-warning mx-2"
+        title="human agent is not ready yet, click here to apply to be our resume auditing agent email or text (415)851-1937"
         href="mailto:jaytech202307@gmail.com"
       >
         Improved Resume By Human
