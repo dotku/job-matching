@@ -9,12 +9,13 @@ export default function ResumeFineTuner() {
   const [ifProcessing, setIfProcessing] = useState(false);
   const refJobDescriptionInput = useRef();
   const refResumeInput = useRef();
-  const refFineTuneResumeInput = useRef();
+  const refInstructInput = useRef();
 
   const handleGenNewResumeClick = () => {
     console.log("refJobDescriptionInput.value");
     const jobDescriptionContent = refJobDescriptionInput.current.currentContent;
     const resumeContent = refResumeInput.current.currentContent;
+    const instructContent = refInstructInput.current.currentContent;
     setIfProcessing(true);
     fetch("https://finai-server.deno.dev/openai/v1/chat/completions", {
       method: "POST",
@@ -28,7 +29,10 @@ export default function ResumeFineTuner() {
             role: "system",
             content: resumeContent,
           },
-          { role: "user", content: "Generate a new resume for me!" },
+          {
+            role: "user",
+            content: `${instructContent}. Generate a resume for me!`,
+          },
         ],
         model: { name: "gpt-4" },
       }),
@@ -44,13 +48,25 @@ export default function ResumeFineTuner() {
   return (
     <>
       <h2>Resume Fine Tuner</h2>
-      <p>1. Copy paste the job requirement here</p>
       <div className="my-2">
-        <JMEdtior ref={refJobDescriptionInput} />
+        <JMEdtior
+          ref={refJobDescriptionInput}
+          value={"<p>1. Copy paste the job requirement here</p>"}
+        />
       </div>
-      <p>2. Copy and paste your resume here</p>
       <div className="my-2">
-        <JMEdtior ref={refResumeInput} />
+        <JMEdtior
+          ref={refResumeInput}
+          value={"<p>2. Copy and paste your resume here</p>"}
+        />
+      </div>
+      <div className="my-2">
+        <JMEdtior
+          ref={refInstructInput}
+          value={
+            "<p>3. Add your preference or improvment feedback on the result if you are not satififed the fined resume return.</p>"
+          }
+        />
       </div>
       <button className="btn btn-primary" onClick={handleGenNewResumeClick}>
         Improved Resume By AI
