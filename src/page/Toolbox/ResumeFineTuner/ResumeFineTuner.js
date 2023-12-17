@@ -2,6 +2,9 @@ import { useRef, useState } from "react";
 import JMEdtior from "../../../components/JMEditor/JMEditor";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
+const instructDefaultValue =
+  "<p>3. Add your preference or improvment feedback on the result if you are not satififed the fined resume return.</p>";
+
 export default function ResumeFineTuner() {
   const [fineTunedResume, setFineTunedResume] = useState(
     "> **fine tuned resume will display here**"
@@ -15,7 +18,11 @@ export default function ResumeFineTuner() {
     console.log("refJobDescriptionInput.value");
     const jobDescriptionContent = refJobDescriptionInput.current.currentContent;
     const resumeContent = refResumeInput.current.currentContent;
-    const instructContent = refInstructInput.current.currentContent;
+    const instructCurrentContent = refInstructInput.current.currentContent;
+    const instructContent =
+      instructCurrentContent === instructDefaultValue
+        ? ""
+        : instructCurrentContent;
     setIfProcessing(true);
     fetch("https://finai-server.deno.dev/openai/v1/chat/completions", {
       method: "POST",
@@ -61,12 +68,7 @@ export default function ResumeFineTuner() {
         />
       </div>
       <div className="my-2">
-        <JMEdtior
-          ref={refInstructInput}
-          value={
-            "<p>3. Add your preference or improvment feedback on the result if you are not satififed the fined resume return.</p>"
-          }
-        />
+        <JMEdtior ref={refInstructInput} value={instructDefaultValue} />
       </div>
       <button className="btn btn-primary" onClick={handleGenNewResumeClick}>
         Improved Resume By AI
