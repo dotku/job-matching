@@ -30,15 +30,15 @@ export default function ResumeFineTuner() {
         messages: [
           {
             role: "system",
-            content: jobDescriptionContent,
+            content: `###job description### ${jobDescriptionContent}`,
           },
           {
             role: "system",
-            content: resumeContent,
+            content: `###resume### ${resumeContent}`,
           },
           {
             role: "user",
-            content: `${instructContent}. Generate a resume for me!`,
+            content: `${instructContent}. Based on the job description, improve my resume.`,
           },
         ],
         model: { name: "gpt-4" },
@@ -58,17 +58,17 @@ export default function ResumeFineTuner() {
       <div className="my-2">
         <JMEdtior
           ref={refJobDescriptionInput}
-          value={"<p>1. Copy paste the job requirement here</p>"}
+          initialValue={"<p>1. Copy paste the job requirement here</p>"}
         />
       </div>
       <div className="my-2">
         <JMEdtior
           ref={refResumeInput}
-          value={"<p>2. Copy and paste your resume here</p>"}
+          initialValue={"<p>2. Copy and paste your resume here</p>"}
         />
       </div>
       <div className="my-2">
-        <JMEdtior ref={refInstructInput} value={instructDefaultValue} />
+        <JMEdtior ref={refInstructInput} initialValue={instructDefaultValue} />
       </div>
       <button className="btn btn-primary" onClick={handleGenNewResumeClick}>
         Improved Resume By AI

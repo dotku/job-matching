@@ -1,12 +1,10 @@
 import { Editor } from "@tinymce/tinymce-react";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 
-function JMEdtior({ value }, ref) {
+function JMEdtior({ initialValue, onEditorChange, onChange }, ref) {
+  const [value, setValue] = useState(initialValue ?? "");
   return (
     <Editor
-      onEditorChange={(e) => {
-        console.log("onEditorChange", e);
-      }}
       ref={ref}
       apiKey="96zg9oy1vp6q8tkgboz3eqcxkbixe6y3ydaq8679s737lcuu"
       init={{
@@ -15,8 +13,8 @@ function JMEdtior({ value }, ref) {
         toolbar:
           "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
       }}
-      value={value}
-      initialValue="Welcome to TinyMCE!"
+      initialValue={initialValue || "Welcome to TinyMCE!"}
+      onEditorChange={(newValue, _editor) => setValue(newValue)}
     />
   );
 }
