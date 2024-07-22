@@ -8,7 +8,7 @@
     "@faker-js/faker": "^8.0.1",
     "@material-ui/core": "^4.0.1",
     "@material-ui/styles": "^4.0.1",
-    "@tinymce/tinymce-react": "^4.3.2",
+    "@tinymce/tinymce-react": "^5.1.1",
     "chart.js": "^4.3.0",
     "classnames": "^2.2.6",
     "faker": "^6.6.6",
