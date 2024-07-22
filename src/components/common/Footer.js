@@ -6,7 +6,6 @@ const footerStyles = makeStyles({
   root: {
     background: "#333",
     border: 0,
-    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
     color: "white",
     padding: "30px",
     "& a": {
@@ -22,7 +21,7 @@ export default function Footer({ classNames }) {
       <div className="container">
         <div className="row">
           <div className="col-md-3 col-xs-6">
-            <div>Job Boards</div>
+            <h3>Job Boards</h3>
             <ul>
               <li>
                 <a href="https://hired.com/x/1cebk">Hired</a>
@@ -42,10 +41,15 @@ export default function Footer({ classNames }) {
               <li>
                 <a href="https://www.dice.com/">Dice</a>
               </li>
+              <li>
+                <a href="https://www.sfhsa.org/services/jobs/jobsnow">
+                  JobsNow!
+                </a>
+              </li>
             </ul>
           </div>
-          <div className="col-md-3 col-xs-6">
-            <div>Interview Preperation</div>
+          <div className="col-md-3 col-xs-12">
+            <h3>Interview Preperation</h3>
             <ul>
               <li>
                 <a href="http://interviewcake.com">InterviewCake</a>
@@ -62,7 +66,7 @@ export default function Footer({ classNames }) {
             </ul>
           </div>
           <div className="col-md-3">
-            <div>Agents</div>
+            <h3>Agents</h3>
             <ul>
               <li>
                 <a href="https://www.teksystems.com/en">TEKSystems</a>
@@ -87,16 +91,27 @@ export default function Footer({ classNames }) {
             </ul>
           </div>
           <div className="col-md-3">
-            <div>Join Us</div>
+            <h3>Join Us</h3>
             <ul>
-              <li>Welcome to fork and submit pull request.</li>
               <li>
-                Email me if you want to join the team <a href="mailto:jobmatching2023@gmail.com">jobmatching2023(at)gmail.com</a>
+                Welcome to{" "}
+                <a href="https://github.com/dotku/job-matching">
+                  fork and submit pull request
+                </a>
+                .
+              </li>
+              <li>
+                Email me if you want to join the team{" "}
+                <a href="mailto:jobmatching2023@gmail.com">
+                  jobmatching2023(at)gmail.com
+                </a>
               </li>
             </ul>
           </div>
         </div>
-        <small className="d-block small text-center">Copyrights &copy; 2019 - 2023</small>
+        <small className="d-block small text-center">
+          Copyrights &copy; 2019 - 2023
+        </small>
       </div>
     </footer>
   );

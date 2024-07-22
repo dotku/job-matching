@@ -1,5 +1,13 @@
 [
   {
+    "title": "JobsNow! Works for you",
+    "subtitle": "JobsNOW! is getting San Francisco back to work. The program has expanded to serve more job seekers and businesses.",
+    "url": "https://www.sfhsa.org/services/jobs/jobsnow",
+    "CTATitle": "Learn More",
+    
+    "imgSrc": "https://www.sfhsa.org/sites/default/files/styles/32_9_xl_1280_x_360_/public/media/image/migrated/Image_JobsNOW%2521%2520Banner%2520.png.webp?itok=4WKiMSkU"
+  },
+  {
     "title": "Boeing St. Louis Career Event",
     "url": "https://boeing.avature.net/stlhiringevent",
     "imgSrc": "http://clientfiles.tmpwebeng.com/boeing/132397V_Boeing_Apr26_HuntsvilleVirtualCareerEvent_EmailHTML/Header.png"
