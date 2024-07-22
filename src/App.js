@@ -23,6 +23,8 @@ import IndustryFinance from "./page/Industry/Finance";
 import TOCWorkLifeBalance from "./page/Publication/Work Life Balance: I already chat with ChatGPT, so you don't have to";
 import Industry from "./page/Industry/Industry";
 import InformationTechnology from "./page/Industry/InformationTechnology";
+import IndustrialsSector from "./page/Industry/Industrials/IndustrialsSector";
+import ResumeFineTuner from "./page/Toolbox/ResumeFineTuner/ResumeFineTuner";
 
 export const AppContext = createContext();
 
@@ -54,6 +56,9 @@ function App() {
                 <Route path="/auth/registration">
                   <Registration />
                 </Route>
+                <Route path="/toolbox/resume-fine-tuner">
+                  <ResumeFineTuner />
+                </Route>
                 <Route path="/demo/modal">
                   <DemoModal />
                 </Route>
@@ -64,6 +69,10 @@ function App() {
                   <CorporationIndex phrase={phrase} />
                 </Route>
                 <Route path="/industry" component={Industry} exact={true} />
+                <Route
+                  path="/industry/industrials"
+                  component={IndustrialsSector}
+                />
                 <Route
                   path="/industry/financials"
                   component={IndustryFinance}
