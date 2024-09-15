@@ -8,7 +8,7 @@ export default function HMCYEDoordashFullTime() {
       <Helmet>
         <title>
           How Much DoorDash Drivers Make in 2024: A 6 Years Doodarsher Shared
-          His Formular for the Actually Earning ! |{" "}
+          His Formular for the Actually Earning! |{" "}
           {process.env.REACT_APP_WEBSITE_NAME}
         </title>
       </Helmet>

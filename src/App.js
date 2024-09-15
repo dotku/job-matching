@@ -26,7 +26,11 @@ import InformationTechnology from "./page/Industry/InformationTechnology";
 import IndustrialsSector from "./page/Industry/Industrials/IndustrialsSector";
 import ResumeFineTuner from "./page/Toolbox/ResumeFineTuner/ResumeFineTuner";
 import { MainLayout } from "./components/layouts";
-import { HMCYEDoordashFullTime, HMCYEDoordash } from "./page/HowMuchCanYouEarn";
+import HowMuchYouCanEarnIndex, {
+  HMCYEDoordashFullTime,
+  HMCYEDoordash,
+} from "./page/HowMuchCanYouEarn";
+import routes from "./routes";
 // import HMCYEDoordash from "./page/HowMuchCanYouEarn/HMCYEDoordash";
 
 export const AppContext = createContext();
@@ -61,12 +65,22 @@ function App() {
               <Route path="/demo/modal">
                 <DemoModal />
               </Route>
-              <Route path="/how-much-can-you-earn/doordash">
+              <Route
+                path="/how-much-can-you-earn/"
+                render={(props) => {
+                  console.log("render props");
+                  const route = routes.find(
+                    (r) => r.path === "/how-much-can-you-earn/"
+                  );
+                  return <HowMuchYouCanEarnIndex routes={route.routes} />;
+                }}
+              />
+              {/* <Route path="/how-much-can-you-earn/doordash">
                 <HMCYEDoordash />
               </Route>
               <Route path="/how-much-can-you-earn/doordash-full-time">
                 <HMCYEDoordashFullTime />
-              </Route>
+              </Route> */}
               <Route path="/talents">
                 <Talents phrase={phrase} />
               </Route>
