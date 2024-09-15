@@ -8,11 +8,11 @@ export default function HowMuchYouCanEarnHome() {
 
   console.log("routes", routes);
   return (
-    <ul>
+    <ul className="list-group list-group-flush">
       {routes
         .filter((route) => route.path !== "/how-much-can-you-earn/")
         .map((route, i) => (
-          <li key={i}>
+          <li key={i} className="list-group-item">
             <Link to={`${route.path}`}>{route.name}</Link>
           </li>
         ))}

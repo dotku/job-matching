@@ -1,5 +1,7 @@
-import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
+
+import React from "react";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { createRoot } from "react-dom/client";
