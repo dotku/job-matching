@@ -1,12 +1,13 @@
 import HMCYEDoordash from "./HMCYEDoordash";
 import HMCYEDoordashFullTime from "./HMCYEDoordashFullTime";
 import HMCYESF40K from "./HMCYESF40K";
-import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
+import HMCYESF5K from "./HMCYESF5K";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import HowMuchYouCanEarnHome from "./HMCYEHome";
 import ScrollToTop from "../../components/ScrollToTop";
 import Breadcrumbs from "../../components/Breadrumbs";
 
-export { HMCYEDoordash, HMCYEDoordashFullTime, HMCYESF40K };
+export { HMCYEDoordash, HMCYEDoordashFullTime, HMCYESF40K, HMCYESF5K };
 
 export function RouteWithSubRoutes(route) {
   return (

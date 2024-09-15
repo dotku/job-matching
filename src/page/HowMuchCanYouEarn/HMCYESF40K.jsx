@@ -12,8 +12,7 @@ export default function HMCYESF40K() {
       </Helmet>
       <h3>What Kind Job Can You Make For 40k Annually in San Francisco?</h3>
       <ReactMarkdown
-        children={`
-        To earn $40k a year from a part-time job in San Francisco, there are a variety of options that balance fewer hours with higher pay. Here are some examples:
+        children={`To earn $40k a year from a part-time job in San Francisco, there are a variety of options that balance fewer hours with higher pay. Here are some examples:
 
 1. **Freelance Writing or Content Creation**: Skilled writers, bloggers, or content creators can charge high rates for their work, making $40k with flexible part-time hours by creating content for businesses or individuals.
 
