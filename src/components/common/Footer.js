@@ -110,7 +110,7 @@ export default function Footer({ classNames }) {
           </div>
         </div>
         <small className="d-block small text-center">
-          Copyrights &copy; 2019 - 2023
+          Copyrights &copy; 2019 - {new Date().getFullYear()}
         </small>
       </div>
     </footer>
