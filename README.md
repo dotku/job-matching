@@ -25,16 +25,11 @@ is Apollo branch which would be alternative solution for python backend.
 ## Get Started
 
 ```bash
-git clone https://github.com/dotku/react-job-matching
+git clone https://github.com/dotku/job-matching
 cd react-job-matching
 npm install
 npm start
 ```
-
-## GTD
-
-- Courses: the way to find the job
-- Facebook Jobs
 
 ## Design
 
@@ -51,8 +46,11 @@ filter the content.
 
 ## GTD
 
+[ ] Courses: the way to find the job
+[ ] Facebook Jobs
 [ ] US Banks/Financial Groups Study  
 [ ] Import oppotunties from [San Francisco Partners](https://sfcitypartner.sfgov.org/pages/Events-BS3/partner-request/view-all-requests.aspx)
+[ ] craete a script to merge nextui to react project
 
 ## References
 
