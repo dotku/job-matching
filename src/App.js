@@ -18,6 +18,7 @@ import AdminCorporations from "./page/Admin/AdminCorporations";
 import Terms from "./page/Terms";
 import DemoModal from "./components/common/DemoModal";
 import Pricing from "./page/Pricing";
+import BlogPage from "./page/Blog/page";
 import Registration from "./page/Auth/Registration";
 import IndustryFinance from "./page/Industry/Finance";
 import TOCWorkLifeBalance from "./page/Publication/Work Life Balance: I already chat with ChatGPT, so you don't have to";
@@ -58,6 +59,9 @@ function App() {
               </Route>
               <Route path="/auth/registration">
                 <Registration />
+              </Route>
+              <Route path="/blog">
+                <BlogPage />
               </Route>
               <Route path="/toolbox/resume-fine-tuner">
                 <ResumeFineTuner />
