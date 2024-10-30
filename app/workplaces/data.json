@@ -1,0 +1,10 @@
+[
+  {
+    comapnay: "Google",
+    payment: 5
+  },
+  {
+    company: "Facebook",
+    payment: 5
+  }
+]
