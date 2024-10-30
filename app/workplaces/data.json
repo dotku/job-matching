@@ -1,10 +1,30 @@
 [
   {
-    comapnay: "Google",
-    payment: 5
+    "comapnay": "Google",
+    "payment": 5,
+    "facility": 5,
+    "work-life-balance": 5
   },
   {
-    company: "Facebook",
-    payment: 5
+    "company": "Facebook",
+    "payment": 5,
+    "facility": 5,
+    "work-life-balance": 4
+  },
+  {
+    "company": "Apple",
+    "payment": 5,
+    "facility": 4,
+    "work-life-balance": 4
+  },
+  {
+    "company": "Tesla",
+    "payment": 5,
+    "work-life-balance": 3
+  },
+  {
+    "company": "Amazon",
+    "payment": 5,
+    "work-life-balance": 3
   }
 ]
