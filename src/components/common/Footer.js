@@ -49,8 +49,9 @@ export default function Footer({ classNames }) {
             </ul>
           </div>
           <div className="col-md-3 col-xs-12">
-            <h3>Interview Preperation</h3>
+            <h3>Interview Preparation</h3>
             <ul>
+              <li><a href="https://aipin.io/">AIPin</a></li>
               <li>
                 <a href="http://interviewcake.com">InterviewCake</a>
               </li>
