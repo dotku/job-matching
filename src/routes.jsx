@@ -6,10 +6,16 @@ import HMCYIndex, {
   HMCYESF5K,
 } from "./page/HowMuchCanYouEarn";
 import HowMuchYouCanEarnHome from "./page/HowMuchCanYouEarn/HMCYEHome";
+import JobPortals from "./page/JobPortals";
 
 const routes = [
   {
     layout: MainLayout,
+  },
+  {
+    path: "/job-portals",
+    name: "Job Portals",
+    component: JobPortals
   },
   {
     path: `/how-much-can-you-earn/`,

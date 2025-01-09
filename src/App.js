@@ -26,6 +26,7 @@ import Industry from "./page/Industry/Industry";
 import InformationTechnology from "./page/Industry/InformationTechnology";
 import IndustrialsSector from "./page/Industry/Industrials/IndustrialsSector";
 import ResumeFineTuner from "./page/Toolbox/ResumeFineTuner/ResumeFineTuner";
+import JobPortals from "./page/JobPortals";
 import { MainLayout } from "./components/layouts";
 import HowMuchYouCanEarnIndex, {
   HMCYEDoordashFullTime,
@@ -104,8 +105,10 @@ function App() {
               <Route path="/corporation/create" component={CorporationCreate} />
               <Route path="/job/:id" component={JobDetail} />
               <Route path="/story/social" component={Social} />
-              <Route path="/resume" component={Resume} />
-              <Route path="/careerAI" component={CareerAI} />
+              <Route exact path="/resume" component={Resume} />
+              <Route exact path="/career-ai" component={CareerAI} />
+              <Route exact path="/job-portals" component={JobPortals} />
+              <Route exact path="/corporation-create" component={CorporationCreate} />
               <Route path="/knowledge-base/visa" component={KBVISA} />
               <Route path="/terms" component={Terms} />
               <Route path="/pricing" component={Pricing} />
