@@ -33,6 +33,7 @@ import HowMuchYouCanEarnIndex, {
   HMCYEDoordash,
 } from "./page/HowMuchCanYouEarn";
 import routes from "./routes";
+import InternalReferral from "./page/InternalReferral";
 // import HMCYEDoordash from "./page/HowMuchCanYouEarn/HMCYEDoordash";
 
 export const AppContext = createContext();
@@ -109,6 +110,7 @@ function App() {
               <Route exact path="/career-ai" component={CareerAI} />
               <Route exact path="/job-portals" component={JobPortals} />
               <Route exact path="/corporation-create" component={CorporationCreate} />
+              <Route exact path="/internal-referral" component={InternalReferral} />
               <Route path="/knowledge-base/visa" component={KBVISA} />
               <Route path="/terms" component={Terms} />
               <Route path="/pricing" component={Pricing} />

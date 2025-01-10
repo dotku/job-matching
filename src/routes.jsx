@@ -7,6 +7,7 @@ import HMCYIndex, {
 } from "./page/HowMuchCanYouEarn";
 import HowMuchYouCanEarnHome from "./page/HowMuchCanYouEarn/HMCYEHome";
 import JobPortals from "./page/JobPortals";
+import InternalReferral from "./page/InternalReferral";
 
 const routes = [
   {
@@ -16,6 +17,11 @@ const routes = [
     path: "/job-portals",
     name: "Job Portals",
     component: JobPortals
+  },
+  {
+    path: "/internal-referral",
+    name: "Internal Referral",
+    component: InternalReferral
   },
   {
     path: `/how-much-can-you-earn/`,
