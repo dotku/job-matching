@@ -1,0 +1,182 @@
+{
+  "jobs": [
+    {
+      "id": 1,
+      "type": "住家阿姨",
+      "work_mode": "住家",
+      "content": "【招聘】急需一个住家阿姨照顾一个15个月的男宝宝，简单家务。要求国语流利，有两年照顾同龄孩子经验，有打针证明和健康报告，一个前雇主电话号码。不开车的可以在最近的车站或地铁站接送。地址：1602 W Campbell Ave. Campbell CA 95008(请自查地图）。一周工作6天。现金$5000～$5300/月。",
+      "duties": [
+        "照顾15个月男宝宝",
+        "简单家务"
+      ],
+      "requirements": [
+        "国语流利",
+        "两年照顾同龄孩子经验",
+        "打针证明",
+        "健康报告",
+        "提供一个前雇主电话号码"
+      ],
+      "schedule": {
+        "days_per_week": 6
+      },
+      "compensation": {
+        "payment_type": "现金",
+        "monthly_min": 5000,
+        "monthly_max": 5300,
+        "currency": "USD"
+      },
+      "transportation": "不开车可在最近车站或地铁站接送",
+      "address": {
+        "street": "1602 W Campbell Ave",
+        "city": "Campbell",
+        "state": "CA",
+        "zip": "95008"
+      },
+      "recruiter": {
+        "contact_methods": ["WeChat", "Phone"],
+        "phone": "1415-862-0009"
+      }
+    },
+    {
+      "id": 2,
+      "type": "住家阿姨",
+      "work_mode": "住家",
+      "content": "【招聘】急需一个住家阿姨。周一晩上7:30pm至周六晩上7:30pm.一周五天。现金$210/天。婆婆自理，独居。工作包括买菜，打扫，煮饭，洗衣，寄信，取药。家住近这些地方。工作地点：三藩市日落区32街夾Santiago St.（注意：不包食）",
+      "duties": [
+        "买菜",
+        "打扫",
+        "煮饭",
+        "洗衣",
+        "寄信",
+        "取药"
+      ],
+      "care_target": "可自理独居婆婆",
+      "schedule": {
+        "start_time": "周一 7:30pm",
+        "end_time": "周六 7:30pm",
+        "days_per_week": 5
+      },
+      "compensation": {
+        "payment_type": "现金",
+        "daily": 210,
+        "currency": "USD"
+      },
+      "benefits": {
+        "meals_included": false
+      },
+      "address": {
+        "city": "San Francisco",
+        "area": "日落区",
+        "street": "32街夹 Santiago St",
+        "state": "CA"
+      },
+      "recruiter": {
+        "contact_methods": ["WeChat", "Phone"],
+        "phone": "1415-862-0009"
+      }
+    },
+    {
+      "id": 3,
+      "type": "通勤阿姨",
+      "work_mode": "通勤",
+      "content": "【招聘】急需一个通勤阿姨，照顾一个能自理的独居老人公寓的婆婆，煮饭和家务一天散步两次。周一至周五7:00am-3:00pm,每天8小时。$21/小时。出IHSS支票。现金免问。地址：700 Laurel Ave San Mateo CA 94401。",
+      "duties": [
+        "照顾可自理独居老人",
+        "煮饭",
+        "家务",
+        "每天散步两次"
+      ],
+      "schedule": {
+        "days": "周一至周五",
+        "hours": "7:00am-3:00pm",
+        "hours_per_day": 8
+      },
+      "compensation": {
+        "payment_type": "IHSS支票",
+        "hourly": 21,
+        "currency": "USD",
+        "cash": false
+      },
+      "address": {
+        "street": "700 Laurel Ave",
+        "city": "San Mateo",
+        "state": "CA",
+        "zip": "94401"
+      },
+      "recruiter": {
+        "contact_methods": ["WeChat", "Phone"],
+        "phone": "1415-862-0009"
+      }
+    },
+    {
+      "id": 4,
+      "type": "水电学徒",
+      "work_mode": "通勤",
+      "content": "【招聘】旧金山急需多名水电学徒$20/小时（有经验工资面谈）50岁以下。不包午餐。有车自己去工作地，无车8:00前到店跟车。邮区94014。要讲广东话。",
+      "duties": [
+        "水电学徒相关工作"
+      ],
+      "requirements": [
+        "50岁以下",
+        "会讲广东话"
+      ],
+      "transportation": {
+        "with_car": "自行前往工地",
+        "without_car": "8:00前到店跟车"
+      },
+      "compensation": {
+        "payment_type": "小时工",
+        "hourly": 20,
+        "currency": "USD",
+        "note": "有经验工资面谈"
+      },
+      "benefits": {
+        "lunch_included": false
+      },
+      "location": {
+        "zip": "94014",
+        "city": "San Francisco"
+      },
+      "recruiter": {
+        "contact_methods": ["WeChat", "Phone"],
+        "phone": "1415-862-0009"
+      }
+    },
+    {
+      "id": 5,
+      "type": "住家保姆",
+      "work_mode": "住家",
+      "content": "【招聘】急需一个住家保姆。家有五人，三个小孩。不用带睡。雇主必有其一在家帮忙。必须流利广东话，如果懂简单英文更好。一周工作五天。周末必须工作，weekday 自选两天休息。$4300/月。现金。马上开始。57岁以下。地址：1101 Hele Dr. Millbrae 94030.",
+      "duties": [
+        "照顾三个小孩",
+        "家庭相关照料"
+      ],
+      "requirements": [
+        "流利广东话",
+        "懂简单英文更好",
+        "57岁以下"
+      ],
+      "schedule": {
+        "days_per_week": 5,
+        "weekend_required": true,
+        "weekday_off_days": 2
+      },
+      "compensation": {
+        "payment_type": "现金",
+        "monthly": 4300,
+        "currency": "USD"
+      },
+      "start_time": "马上开始",
+      "address": {
+        "street": "1101 Hele Dr",
+        "city": "Millbrae",
+        "state": "CA",
+        "zip": "94030"
+      },
+      "recruiter": {
+        "contact_methods": ["WeChat", "Phone"],
+        "phone": "1415-862-0009"
+      }
+    }
+  ]
+}
