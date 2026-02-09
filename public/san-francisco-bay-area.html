@@ -1,0 +1,291 @@
+```html
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>招聘信息汇总</title>
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --card:#12141a;
+      --text:#e9edf1;
+      --muted:#a9b1bc;
+      --line:#232734;
+      --accent:#6aa6ff;
+      --badge:#1b2233;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,
+        "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+      background:linear-gradient(180deg,#0b0c10 0%, #0f1320 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 28px 16px 44px;
+    }
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    h1{
+      font-size:22px;
+      line-height:1.2;
+      margin:0;
+      letter-spacing:.2px;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:6px;
+    }
+    .contact{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:6px;
+      min-width: 220px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      background:rgba(18,20,26,.7);
+      border-radius:999px;
+      font-size:13px;
+      color:var(--text);
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .pill strong{color:var(--accent)}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 820px){
+      .grid{grid-template-columns: 1fr;}
+      .contact{align-items:flex-start; min-width:auto;}
+      header{flex-direction:column;}
+    }
+    .card{
+      border:1px solid var(--line);
+      background:rgba(18,20,26,.72);
+      border-radius:16px;
+      padding:14px 14px 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.25);
+      backdrop-filter: blur(6px);
+    }
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--badge);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .idx{
+      color:var(--accent);
+      font-weight:700;
+    }
+    .tag{
+      font-size:12px;
+      color:#cfe0ff;
+      border:1px solid rgba(106,166,255,.35);
+      background: rgba(106,166,255,.12);
+      padding:4px 8px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .content{
+      margin:0;
+      color:var(--text);
+      font-size:14px;
+      line-height:1.55;
+      letter-spacing:.1px;
+    }
+    .meta{
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px dashed rgba(35,39,52,.9);
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    footer{
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>招聘/信息汇总</h1>
+        <div class="sub">（共 11 条）请直接联系：电话或微信同号</div>
+      </div>
+      <div class="contact">
+        <a class="pill" href="tel:+14158620009" aria-label="拨打电话">
+          📞 <strong>1415-862-0009</strong>
+        </a>
+        <span class="pill" role="note">💬 微信同号：<strong>1415-862-0009</strong></span>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">01</span> 招聘</span>
+          <span class="tag">住家阿姨 · Millbrae</span>
+        </div>
+        <p class="content">
+          急需一个住家阿姨，一周六天，煮饭买菜打扫。周一至周六家有7个吃饭。共两个阿姨工作。
+          地址：Millbrae（近香满楼酒家）。月薪$4500现金。58岁以下。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">02</span> 招聘</span>
+          <span class="tag">通勤阿姨 · 东湾</span>
+        </div>
+        <p class="content">
+          東灣希活急需一位可通勤上班阿姨，一周六天，煮饭洗衫打扫。8:30am-6:30pm，
+          $20/小時、會出1099。现金免问。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">03</span> 招聘</span>
+          <span class="tag">日餐企枱 · SF</span>
+        </div>
+        <p class="content">
+          日歺企枱，旧金山市中心和愚人码头，有经验或流利英语，优薪+多小费。出支票，现金免问。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">04</span> 招聘</span>
+          <span class="tag">住家保姆 · Sunset</span>
+        </div>
+        <p class="content">
+          住家保姆，旧金山日落区，做饭家务。逢周日晚7:30pm～周二晚7:30pm $210现金/日。
+          或$240/日，出1099。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">05</span> 招聘</span>
+          <span class="tag">托儿助手 · 44街</span>
+        </div>
+        <p class="content">
+          旧金山日落区44街家庭托儿急招一个助手，要求从未工作过这个行业，广东话，50岁左右。
+          欢迎新移民。周一至周五8:00am-5:30pm。现金月薪$2500/月。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">06</span> 招聘</span>
+          <span class="tag">橱柜拼装 · SF</span>
+        </div>
+        <p class="content">
+          旧金山近San Bruno Ave 橱柜公司急需一个拼橱柜的男员工。50岁以下。包午餐和下午茶。
+          周一至周五8:30-5:00pm。有薪休假，大日子。若周六开工有1.5倍。无需经验，欢迎新移民，
+          想学一门手艺的好时机。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">07</span> 招聘</span>
+          <span class="tag">水电学徒 · 94014</span>
+        </div>
+        <p class="content">
+          旧金山急需多名水电学徒 $20/小时（有经验工资面谈）50岁以下。不包午餐。
+          有车自己去工作地，无车8:00前到店跟车。邮区94014。要懂国语。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">08</span> 招聘</span>
+          <span class="tag">带娃 · Pleasant Hill</span>
+        </div>
+        <p class="content">
+          急需一个逢周一和周二照顾一个10个月大的男B。广东话。有经验。一天8小时。
+          $23每小时现金。地址：Fieldcrest Cir, Pleasant Hill, 94523。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">09</span> 招聘</span>
+          <span class="tag">中餐帮厨 · 列治文区</span>
+        </div>
+        <p class="content">
+          旧金山烈自文区。中歺厅急需一个姨帮厨，切肉，切菜之类。周一至周五3:00pm-8:30pm，
+          周末11:00am-8:30pm。$20/小时。逢周二店关门。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">10</span> 招聘</span>
+          <span class="tag">文员 · Ocean区</span>
+        </div>
+        <p class="content">
+          旧金山建筑公司请男生文员。Ocean 区，周一至周五8:00am-4:30pm。$23/小时开始。
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="top">
+          <span class="badge"><span class="idx">11</span> 消分</span>
+          <span class="tag">交通扣分处理</span>
+        </div>
+        <p class="content">
+          警察抄牌，扣分，保险一定升。扣多过3分会没有保险公司承保。想不用出门就可以消除扣分。
+        </p>
+      </article>
+    </section>
+
+    <footer>
+      <div>有需要的朋友请电或微信同号：<strong style="color:var(--text)">1415-862-0009</strong></div>
+      <div style="margin-top:6px;">提示：以上内容按原文整理展示；具体细节请以电话/微信沟通为准。</div>
+    </footer>
+  </div>
+</body>
+</html>
+```
