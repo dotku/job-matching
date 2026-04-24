@@ -1,0 +1,43 @@
+# fly.toml — job-matching-worker
+#
+# Single long-running queue worker. NOT a web service.
+#
+# Deployment notes:
+# - We pin to 1 machine. Fly's modern default is to deploy 2 (HA), which is
+#   wrong for a worker — concurrent processors would race on the same job
+#   row unless the lease/lock pattern is in place.
+# - Always deploy with --ha=false:
+#     fly deploy --ha=false --app job-matching-worker
+# - One-time, after migrating from the prior 2-machine deploy:
+#     fly scale count 1 --app job-matching-worker
+# - To bump capacity later, raise via `fly scale count N` AND add
+#   FOR UPDATE SKIP LOCKED claim semantics in the worker first.
+#
+# See https://fly.io/docs/reference/configuration/
+
+app = 'job-matching-worker'
+primary_region = 'sjc'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  NODE_ENV = 'production'
+
+[processes]
+  worker = 'node dist/index.js'
+
+[[vm]]
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 2048
+
+[deploy]
+  strategy = 'rolling'
+
+# Auto-restart the process if it crashes. The worker is expected to run
+# forever — exit codes mean a bug, so retry with backoff handled by fly.
+[[restart]]
+  policy = 'on-failure'
+  retries = 10
+  processes = ['worker']
