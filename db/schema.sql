@@ -41,6 +41,27 @@ ALTER TABLE candidates
 ALTER TABLE candidates
   ADD COLUMN IF NOT EXISTS auto_apply_cookies_enc text;
 
+-- LLM credits balance, in micro-cents (1 micro-cent = $10^-8). A $0.10
+-- starter is 10,000,000 micro-cents; at Gemini Flash-Lite prices that is
+-- roughly 2,000 email-match calls. Deducted on every non-BYOK LLM call.
+ALTER TABLE candidates
+  ADD COLUMN IF NOT EXISTS llm_credits_micro_cents bigint NOT NULL DEFAULT 10000000;
+
+-- BYOK: candidate-supplied API key so all LLM calls route through their
+-- account instead of ours (and bypass credit deduction). All three providers
+-- expose OpenAI-compatible /chat/completions so we share one fetch path.
+ALTER TABLE candidates
+  ADD COLUMN IF NOT EXISTS byok_provider text;
+ALTER TABLE candidates
+  DROP CONSTRAINT IF EXISTS candidates_byok_provider_check;
+ALTER TABLE candidates
+  ADD CONSTRAINT candidates_byok_provider_check
+  CHECK (byok_provider IS NULL OR byok_provider IN ('cerebras', 'openai', 'gemini', 'openrouter'));
+ALTER TABLE candidates
+  ADD COLUMN IF NOT EXISTS byok_api_key_enc text;
+ALTER TABLE candidates
+  ADD COLUMN IF NOT EXISTS byok_model text;
+
 -- Phone extracted from resume (E.164). Informational only — email is the
 -- identity anchor (it's what actually gets submitted to employer portals).
 -- Phone is NOT UNIQUE: shared numbers (family, mis-extracted) shouldn't
@@ -88,6 +109,51 @@ CREATE INDEX IF NOT EXISTS saved_listings_candidate_idx
 CREATE INDEX IF NOT EXISTS saved_listings_status_idx
   ON saved_listings (status, saved_at);
 
+-- Application outcome lifecycle. Independent of `status` (which tracks the
+-- submit pipeline). Only meaningful once status='submitted'. Updated from
+-- email parsing, manual edits, or future ATS APIs — see outcome_source.
+ALTER TABLE saved_listings
+  ADD COLUMN IF NOT EXISTS outcome text NOT NULL DEFAULT 'pending';
+ALTER TABLE saved_listings
+  DROP CONSTRAINT IF EXISTS saved_listings_outcome_check;
+ALTER TABLE saved_listings
+  ADD CONSTRAINT saved_listings_outcome_check CHECK (outcome IN (
+    'pending',       -- submitted, no signal yet
+    'confirmed',     -- ATS confirmation email received
+    'rejected',      -- explicit rejection
+    'screening',     -- OA, take-home, or recruiter screen
+    'interviewing',  -- onsite/phone interview scheduled or done
+    'offer',         -- offer extended, not yet decided
+    'accepted',      -- candidate accepted
+    'declined',      -- candidate declined
+    'ghosted'        -- silence beyond timeout window
+  ));
+
+ALTER TABLE saved_listings
+  ADD COLUMN IF NOT EXISTS outcome_note text;
+ALTER TABLE saved_listings
+  ADD COLUMN IF NOT EXISTS outcome_updated_at timestamptz;
+ALTER TABLE saved_listings
+  ADD COLUMN IF NOT EXISTS outcome_source text;
+ALTER TABLE saved_listings
+  DROP CONSTRAINT IF EXISTS saved_listings_outcome_source_check;
+ALTER TABLE saved_listings
+  ADD CONSTRAINT saved_listings_outcome_source_check CHECK (
+    outcome_source IS NULL OR outcome_source IN ('email','manual','ats_api','timeout')
+  );
+
+-- Submit failure detail — captured by the worker when Playwright detects a
+-- non-success page. failure_screenshot_key references R2.
+ALTER TABLE saved_listings
+  ADD COLUMN IF NOT EXISTS failure_reason text;
+ALTER TABLE saved_listings
+  ADD COLUMN IF NOT EXISTS failure_screenshot_key text;
+ALTER TABLE saved_listings
+  ADD COLUMN IF NOT EXISTS attempt_count int NOT NULL DEFAULT 0;
+
+CREATE INDEX IF NOT EXISTS saved_listings_outcome_idx
+  ON saved_listings (candidate_id, outcome, outcome_updated_at DESC);
+
 -- Q&A registry for custom questions the worker had to answer on behalf of
 -- the candidate (e.g. "Why are you interested in this role?"). Every LLM-
 -- generated answer is recorded so the user can review, override, and have
@@ -109,6 +175,53 @@ CREATE INDEX IF NOT EXISTS submission_answers_listing_idx
   ON submission_answers (saved_listing_id);
 CREATE INDEX IF NOT EXISTS submission_answers_question_lookup_idx
   ON submission_answers (candidate_id, lower(question));
+
+-- Per-call LLM usage log. Written on every LLM call regardless of BYOK so
+-- we retain full telemetry; credit deduction happens only when byok=false.
+-- cost_micro_cents uses 10^-8 USD units (matches candidates.llm_credits_micro_cents).
+CREATE TABLE IF NOT EXISTS llm_usage (
+  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  candidate_id      uuid NOT NULL REFERENCES candidates(id) ON DELETE CASCADE,
+  kind              text NOT NULL,
+  provider          text NOT NULL,
+  model             text NOT NULL,
+  input_tokens      integer NOT NULL DEFAULT 0,
+  output_tokens     integer NOT NULL DEFAULT 0,
+  cost_micro_cents  bigint NOT NULL DEFAULT 0,
+  byok              boolean NOT NULL DEFAULT false,
+  context_ref       text,
+  created_at        timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS llm_usage_candidate_idx
+  ON llm_usage (candidate_id, created_at DESC);
+
+-- Multiple BYOK keys per candidate. At most one row per candidate is
+-- active at a time (enforced by the partial unique index below) — that's
+-- the key our LLM router hands to the provider. Users can store a Gemini
+-- + OpenAI + Cerebras key and toggle which is active without re-pasting.
+CREATE TABLE IF NOT EXISTS candidate_byok_keys (
+  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  candidate_id    uuid NOT NULL REFERENCES candidates(id) ON DELETE CASCADE,
+  provider        text NOT NULL,
+  model           text NOT NULL,
+  api_key_enc     text NOT NULL,
+  label           text,
+  is_active       boolean NOT NULL DEFAULT false,
+  created_at      timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE candidate_byok_keys
+  DROP CONSTRAINT IF EXISTS candidate_byok_keys_provider_check;
+ALTER TABLE candidate_byok_keys
+  ADD CONSTRAINT candidate_byok_keys_provider_check
+  CHECK (provider IN ('cerebras', 'openai', 'gemini', 'openrouter'));
+
+CREATE UNIQUE INDEX IF NOT EXISTS candidate_byok_keys_one_active_idx
+  ON candidate_byok_keys (candidate_id) WHERE is_active;
+
+CREATE INDEX IF NOT EXISTS candidate_byok_keys_candidate_idx
+  ON candidate_byok_keys (candidate_id, created_at DESC);
 
 -- Shared updated_at trigger function
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$

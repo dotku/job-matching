@@ -8,11 +8,13 @@ import { Link as NextUILink } from "@nextui-org/link";
 import type { SavedListing, SubmissionAnswer } from "@/lib/candidates";
 import {
   getListingAnswersAction,
+  getLlmStatusAction,
+  markListingSubmittedAction,
   removeSavedListingAction,
   retrySavedListingAction,
   submitAllQueuedAction,
   updateAnswerOverrideAction,
-  updateTargetLocationsAction,
+  verifySubmissionsViaGmailAction,
 } from "@/app/apply/actions";
 
 type StatusFilter = "all" | SavedListing["status"];
@@ -35,16 +37,99 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
   const [items, setItems] = useState<SavedListing[]>(listings);
   const [filter, setFilter] = useState<StatusFilter>("all");
   const [query, setQuery] = useState("");
-  const [visible, setVisible] = useState(50);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 25;
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isBulkRunning, setIsBulkRunning] = useState(false);
   const [bulkInfo, setBulkInfo] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verifyInfo, setVerifyInfo] = useState<string | null>(null);
+  const [verifyDiag, setVerifyDiag] = useState<
+    {
+      from: string;
+      subject: string;
+      outcome: "confirmed" | "not-confirmation" | "no-matching-listing";
+      llmCompanyName: string | null;
+      rationale: string;
+      provider: string;
+      model: string;
+      inputTokens: number;
+      outputTokens: number;
+      byok: boolean;
+      costMicroCents: number;
+    }[]
+  >([]);
 
   const queuedCount = useMemo(
     () => items.filter((l) => l.status === "queued").length,
     [items],
   );
+
+  async function handleVerifyGmail() {
+    setIsVerifying(true);
+    setVerifyInfo(null);
+    setVerifyDiag([]);
+    setError(null);
+    try {
+      const result = await verifySubmissionsViaGmailAction();
+
+      if (!result.ok) {
+        setError(result.error);
+
+        return;
+      }
+      const {
+        scanned,
+        updated,
+        llmCalls,
+        matched,
+        scannedEmails,
+        skippedReason,
+      } = result.data;
+
+      setVerifyDiag(scannedEmails ?? []);
+
+      if (skippedReason) {
+        setVerifyInfo(skippedReason);
+
+        return;
+      }
+
+      const callsSuffix =
+        llmCalls > 0 ? ` · ${llmCalls} LLM call${llmCalls === 1 ? "" : "s"}` : "";
+
+      if (updated === 0) {
+        setVerifyInfo(
+          `Scanned ${scanned} email${scanned === 1 ? "" : "s"}, no new confirmations matched${callsSuffix}.`,
+        );
+      } else {
+        setVerifyInfo(
+          `Found ${updated} confirmation${updated === 1 ? "" : "s"}${callsSuffix}: ${matched
+            .map((m) => m.matchedListingCompany)
+            .join(", ")}. Rows updated to submitted.`,
+        );
+        // Flip matched rows locally so user sees them without refresh
+        const matchedListingCompanies = new Set(
+          matched.map((m) => m.matchedListingCompany),
+        );
+
+        setItems((prev) =>
+          prev.map((l) =>
+            matchedListingCompanies.has(l.companyName) && l.status !== "submitted"
+              ? {
+                  ...l,
+                  status: "submitted" as const,
+                  submittedAt: new Date().toISOString(),
+                }
+              : l,
+          ),
+        );
+      }
+    } finally {
+      setIsVerifying(false);
+    }
+  }
 
   async function handleSubmitAll() {
     setIsBulkRunning(true);
@@ -90,7 +175,11 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
     });
   }, [items, filter, query]);
 
-  const shown = filtered.slice(0, visible);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pageEnd = Math.min(pageStart + PAGE_SIZE, filtered.length);
+  const shown = filtered.slice(pageStart, pageEnd);
 
   async function handleRemove(id: string) {
     setBusyId(id);
@@ -126,6 +215,24 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
     }
   }
 
+  async function handleMarkSubmitted(id: string) {
+    setBusyId(id);
+    setError(null);
+    try {
+      const result = await markListingSubmittedAction(id);
+
+      if (result.ok) {
+        setItems((prev) =>
+          prev.map((l) => (l.id === id ? result.data : l)),
+        );
+      } else {
+        setError(result.error);
+      }
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   const counts = useMemo(() => {
     const c: Record<StatusFilter, number> = {
       all: items.length,
@@ -145,7 +252,7 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <TargetLocationsEditor initial={initialTargetLocations} />
+      <DashboardSettingsSection initialTargetLocations={initialTargetLocations} />
 
       <div className="rounded-large border border-primary-200 bg-primary-50/40 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex flex-col">
@@ -161,15 +268,32 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
           {bulkInfo && (
             <div className="text-xs text-success-700 mt-1">{bulkInfo}</div>
           )}
+          {verifyInfo && (
+            <div className="text-xs text-success-700 mt-1">{verifyInfo}</div>
+          )}
+          {verifyDiag.length > 0 && (
+            <VerifyDiagTable rows={verifyDiag} />
+          )}
         </div>
-        <Button
-          color="primary"
-          isDisabled={queuedCount === 0 || isBulkRunning}
-          isLoading={isBulkRunning}
-          onPress={handleSubmitAll}
-        >
-          Auto-submit all ({queuedCount})
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button
+            isDisabled={isVerifying}
+            isLoading={isVerifying}
+            size="sm"
+            variant="flat"
+            onPress={handleVerifyGmail}
+          >
+            Verify via Gmail
+          </Button>
+          <Button
+            color="primary"
+            isDisabled={queuedCount === 0 || isBulkRunning}
+            isLoading={isBulkRunning}
+            onPress={handleSubmitAll}
+          >
+            Auto-submit all ({queuedCount})
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -184,7 +308,7 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
             type="button"
             onClick={() => {
               setFilter(f.key);
-              setVisible(50);
+              setPage(1);
             }}
           >
             {f.label} ({counts[f.key] ?? 0})
@@ -197,7 +321,7 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
         value={query}
         onValueChange={(v) => {
           setQuery(v);
-          setVisible(50);
+          setPage(1);
         }}
       />
 
@@ -206,8 +330,10 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
       )}
 
       <p className="text-xs text-default-500">
-        {filtered.length.toLocaleString()} matching · showing{" "}
-        {Math.min(visible, filtered.length)}
+        {filtered.length.toLocaleString()} matching ·{" "}
+        {filtered.length === 0
+          ? "none to show"
+          : `showing ${pageStart + 1}–${pageEnd}`}
       </p>
 
       <ul className="flex flex-col gap-2">
@@ -216,6 +342,7 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
             isBusy={busyId === l.id}
             key={l.id}
             listing={l}
+            onMarkSubmitted={() => handleMarkSubmitted(l.id)}
             onRemove={() => handleRemove(l.id)}
             onRetry={() => handleRetry(l.id)}
           />
@@ -231,10 +358,26 @@ export function DashboardClient({ listings, initialTargetLocations }: Props) {
         </p>
       )}
 
-      {visible < filtered.length && (
-        <div className="flex justify-center pt-4">
-          <Button variant="flat" onPress={() => setVisible((n) => n + 50)}>
-            Show more
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 pt-4">
+          <Button
+            isDisabled={currentPage <= 1}
+            size="sm"
+            variant="flat"
+            onPress={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Prev
+          </Button>
+          <span className="text-xs text-default-500 tabular-nums">
+            Page {currentPage} / {totalPages}
+          </span>
+          <Button
+            isDisabled={currentPage >= totalPages}
+            size="sm"
+            variant="flat"
+            onPress={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Next
           </Button>
         </div>
       )}
@@ -247,14 +390,17 @@ function ListingRow({
   isBusy,
   onRemove,
   onRetry,
+  onMarkSubmitted,
 }: {
   listing: SavedListing;
   isBusy: boolean;
   onRemove: () => void;
   onRetry: () => void;
+  onMarkSubmitted: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const canRetry = listing.status === "failed" || listing.status === "skipped";
+  const canMarkSubmitted = listing.status !== "submitted";
 
   return (
     <li className="rounded-medium border border-default-200 bg-content1 flex flex-col">
@@ -319,6 +465,19 @@ function ListingRow({
           >
             View
           </NextUILink>
+          {canMarkSubmitted && (
+            <Button
+              color="success"
+              isDisabled={isBusy}
+              isLoading={isBusy}
+              size="sm"
+              title="I submitted this manually — mark it as done so it won't be retried."
+              variant="flat"
+              onPress={onMarkSubmitted}
+            >
+              Mark submitted
+            </Button>
+          )}
           {canRetry && (
             <Button
               isDisabled={isBusy}
@@ -524,71 +683,181 @@ function AnswerItem({ answer }: { answer: SubmissionAnswer }) {
   );
 }
 
-function TargetLocationsEditor({ initial }: { initial: string }) {
-  const [value, setValue] = useState(initial);
-  const [saved, setSaved] = useState(initial);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<
-    | { kind: "idle" }
-    | { kind: "saved"; at: number }
-    | { kind: "error"; m: string }
-  >({ kind: "idle" });
+/**
+ * Compact summary of profile-level settings (credits, BYOK, preferred
+ * locations) with a link to /profile for editing. Settings themselves
+ * live on /profile — this is just the at-a-glance view so users don't
+ * need to leave the dashboard to see their status.
+ */
+function DashboardSettingsSection({
+  initialTargetLocations,
+}: {
+  initialTargetLocations: string;
+}) {
+  const [summary, setSummary] = useState<{
+    creditsMicroCents: number;
+    activeProvider: string | null;
+    activeModel: string | null;
+  }>({
+    creditsMicroCents: 0,
+    activeProvider: null,
+    activeModel: null,
+  });
 
-  const dirty = value.trim() !== saved.trim();
+  useEffect(() => {
+    let cancelled = false;
 
-  async function handleSave() {
-    setBusy(true);
-    setMsg({ kind: "idle" });
-    try {
-      const result = await updateTargetLocationsAction(value);
+    (async () => {
+      const result = await getLlmStatusAction();
 
-      if (result.ok) {
-        setSaved(result.data.targetLocations ?? "");
-        setMsg({ kind: "saved", at: Date.now() });
-      } else {
-        setMsg({ kind: "error", m: result.error });
-      }
-    } finally {
-      setBusy(false);
-    }
-  }
+      if (cancelled || !result.ok) return;
+      setSummary({
+        creditsMicroCents: result.data.creditsMicroCents,
+        activeProvider: result.data.activeKey?.provider ?? null,
+        activeModel: result.data.activeKey?.model ?? null,
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const creditsDisplay = (() => {
+    const usd = summary.creditsMicroCents / 1e8;
+
+    if (!Number.isFinite(usd)) return "$0.00";
+    if (Math.abs(usd) >= 1) return `$${usd.toFixed(2)}`;
+
+    return `$${usd.toFixed(4)}`;
+  })();
+  const providerDisplay = summary.activeProvider
+    ? `BYOK ${summary.activeProvider}/${summary.activeModel ?? ""}`
+    : "default provider";
+  const trimmed = initialTargetLocations.trim();
+  const locationsDisplay = trimmed
+    ? trimmed.length > 40
+      ? `${trimmed.slice(0, 40)}…`
+      : trimmed
+    : "no preferred locations";
 
   return (
-    <div className="rounded-large border border-default-200 bg-content1 p-4 flex flex-col gap-2">
-      <div className="flex items-baseline justify-between gap-2">
-        <div className="text-sm font-medium">Preferred locations</div>
-        {msg.kind === "saved" && (
-          <span className="text-xs text-success-600">
-            Saved at {new Date(msg.at).toLocaleTimeString()}
-          </span>
-        )}
-        {msg.kind === "error" && (
-          <span className="text-xs text-danger">{msg.m}</span>
-        )}
-      </div>
-      <Input
-        isDisabled={busy}
-        placeholder="e.g. San Francisco, Seattle, Remote, or Anywhere in the US"
-        value={value}
-        onValueChange={setValue}
-      />
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-xs text-default-500">
-          Used when the LLM answers &ldquo;Where are you looking to work?&rdquo;
-          on applications and to filter match recommendations.
+    <div className="rounded-large border border-default-200 bg-content1 px-4 py-3 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="text-sm font-medium whitespace-nowrap">
+          Settings
         </span>
-        <Button
-          color="primary"
-          isDisabled={!dirty || busy}
-          isLoading={busy}
-          size="sm"
-          onPress={handleSave}
-        >
-          Save
-        </Button>
+        <span className="text-xs text-default-500 truncate">
+          credits {creditsDisplay} · {providerDisplay} · {locationsDisplay}
+        </span>
       </div>
+      <NextUILink
+        className="text-xs whitespace-nowrap"
+        href="/profile"
+        size="sm"
+      >
+        Manage →
+      </NextUILink>
     </div>
   );
+}
+
+
+function VerifyDiagTable({
+  rows,
+}: {
+  rows: {
+    from: string;
+    subject: string;
+    outcome: "confirmed" | "not-confirmation" | "no-matching-listing";
+    llmCompanyName: string | null;
+    rationale: string;
+    provider: string;
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    byok: boolean;
+    costMicroCents: number;
+  }[];
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const confirmed = rows.filter((r) => r.outcome === "confirmed").length;
+  const noMatch = rows.filter((r) => r.outcome === "no-matching-listing").length;
+  const rejected = rows.filter((r) => r.outcome === "not-confirmation").length;
+  const totalIn = rows.reduce((a, r) => a + r.inputTokens, 0);
+  const totalOut = rows.reduce((a, r) => a + r.outputTokens, 0);
+  const totalCost = rows.reduce((a, r) => a + r.costMicroCents, 0);
+
+  return (
+    <details
+      className="mt-2"
+      onToggle={(e) => setExpanded((e.target as HTMLDetailsElement).open)}
+      open={expanded}
+    >
+      <summary className="cursor-pointer text-xs text-default-600 hover:text-default-800">
+        Details: {confirmed} confirmed · {noMatch} had no matching saved
+        listing · {rejected} rejected · {totalIn.toLocaleString()} in +{" "}
+        {totalOut.toLocaleString()} out tokens
+        {totalCost > 0 && ` · ${formatMicroCentsUsd(totalCost)}`}
+      </summary>
+      <div className="mt-2 flex flex-col gap-1">
+        {rows.map((r, i) => (
+          <div
+            className="text-[11px] rounded-medium border border-default-200 bg-content1 p-2"
+            key={i}
+          >
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className={
+                  r.outcome === "confirmed"
+                    ? "text-[10px] px-1.5 py-0.5 rounded-full bg-success-100 text-success-700"
+                    : r.outcome === "no-matching-listing"
+                      ? "text-[10px] px-1.5 py-0.5 rounded-full bg-warning-100 text-warning-700"
+                      : "text-[10px] px-1.5 py-0.5 rounded-full bg-default-200 text-default-700"
+                }
+              >
+                {r.outcome}
+              </span>
+              {r.llmCompanyName && (
+                <span className="text-default-600">
+                  → {r.llmCompanyName}
+                </span>
+              )}
+              <span className="ml-auto font-mono text-default-500">
+                {r.provider}/{r.model}
+                {r.byok ? " (BYOK)" : ""} · {r.inputTokens}+{r.outputTokens}{" "}
+                tok
+                {!r.byok && r.costMicroCents > 0 ? (
+                  <> · {formatMicroCentsUsd(r.costMicroCents)}</>
+                ) : null}
+              </span>
+            </div>
+            <div className="text-default-700 mt-1 truncate">
+              <span className="text-default-500">From:</span> {r.from}
+            </div>
+            <div className="text-default-700 truncate">
+              <span className="text-default-500">Subject:</span> {r.subject}
+            </div>
+            {r.rationale && (
+              <div className="text-default-500 mt-1 italic">
+                {r.rationale}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+/** Micro-cents → "$0.0001" for tiny values, "$0.12" above 1¢. */
+function formatMicroCentsUsd(microCents: number): string {
+  const usd = microCents / 1e8;
+
+  if (usd >= 0.01) return `$${usd.toFixed(2)}`;
+  if (usd >= 0.0001) return `$${usd.toFixed(4)}`;
+
+  return `$${usd.toFixed(6)}`;
 }
 
 function StatusChip({ status }: { status: SavedListing["status"] }) {

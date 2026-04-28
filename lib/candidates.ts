@@ -32,15 +32,42 @@ export interface SavedListingInput {
   sponsorship?: string;
 }
 
+export type SubmitStatus =
+  | "queued"
+  | "submitting"
+  | "submitted"
+  | "failed"
+  | "skipped";
+
+export type Outcome =
+  | "pending"
+  | "confirmed"
+  | "rejected"
+  | "screening"
+  | "interviewing"
+  | "offer"
+  | "accepted"
+  | "declined"
+  | "ghosted";
+
+export type OutcomeSource = "email" | "manual" | "ats_api" | "timeout";
+
 export interface SavedListing extends SavedListingInput {
   id: string;
   candidateId: string;
-  status: "queued" | "submitting" | "submitted" | "failed" | "skipped";
+  status: SubmitStatus;
   statusNote: string | null;
   savedAt: string;
   submittedAt: string | null;
   /** Count of submission_answers rows for this listing (0 when none). */
   answerCount: number;
+  outcome: Outcome;
+  outcomeNote: string | null;
+  outcomeUpdatedAt: string | null;
+  outcomeSource: OutcomeSource | null;
+  failureReason: string | null;
+  failureScreenshotKey: string | null;
+  attemptCount: number;
 }
 
 interface CandidateRow {
@@ -69,11 +96,18 @@ interface SavedListingRow {
   category: string | null;
   locations: string[] | null;
   sponsorship: string | null;
-  status: SavedListing["status"];
+  status: SubmitStatus;
   status_note: string | null;
   saved_at: string;
   submitted_at: string | null;
   answer_count?: number;
+  outcome: Outcome;
+  outcome_note: string | null;
+  outcome_updated_at: string | null;
+  outcome_source: OutcomeSource | null;
+  failure_reason: string | null;
+  failure_screenshot_key: string | null;
+  attempt_count: number;
 }
 
 function rowToCandidate(row: CandidateRow): Candidate {
@@ -110,7 +144,83 @@ function rowToSaved(row: SavedListingRow): SavedListing {
     savedAt: row.saved_at,
     submittedAt: row.submitted_at,
     answerCount: row.answer_count ?? 0,
+    outcome: row.outcome,
+    outcomeNote: row.outcome_note,
+    outcomeUpdatedAt: row.outcome_updated_at,
+    outcomeSource: row.outcome_source,
+    failureReason: row.failure_reason,
+    failureScreenshotKey: row.failure_screenshot_key,
+    attemptCount: row.attempt_count,
   };
+}
+
+export interface OutcomeUpdate {
+  outcome: Outcome;
+  source: OutcomeSource;
+  note?: string;
+}
+
+/**
+ * Set the outcome for a single saved_listing. The worker reports the submit
+ * pipeline; this is for the post-submit lifecycle (email/manual/ats_api).
+ */
+export async function updateOutcome(
+  savedListingId: string,
+  update: OutcomeUpdate,
+): Promise<void> {
+  await sql`
+    UPDATE saved_listings
+    SET outcome = ${update.outcome},
+        outcome_source = ${update.source},
+        outcome_note = ${update.note ?? null},
+        outcome_updated_at = now()
+    WHERE id = ${savedListingId}
+      AND status = 'submitted'
+  `;
+}
+
+export interface OutcomeCounts {
+  pending: number;
+  confirmed: number;
+  rejected: number;
+  screening: number;
+  interviewing: number;
+  offer: number;
+  accepted: number;
+  declined: number;
+  ghosted: number;
+}
+
+/**
+ * Aggregate outcome counts for a candidate's submitted applications. Useful
+ * for the dashboard summary card on /apply.
+ */
+export async function getOutcomeCounts(
+  candidateId: string,
+): Promise<OutcomeCounts> {
+  const rows = (await sql`
+    SELECT outcome, count(*)::int AS n
+    FROM saved_listings
+    WHERE candidate_id = ${candidateId}
+      AND status = 'submitted'
+    GROUP BY outcome
+  `) as unknown as { outcome: Outcome; n: number }[];
+
+  const init: OutcomeCounts = {
+    pending: 0,
+    confirmed: 0,
+    rejected: 0,
+    screening: 0,
+    interviewing: 0,
+    offer: 0,
+    accepted: 0,
+    declined: 0,
+    ghosted: 0,
+  };
+
+  for (const r of rows) init[r.outcome] = r.n;
+
+  return init;
 }
 
 export interface UpsertCandidateParams extends CandidateInput {
@@ -392,6 +502,39 @@ export async function updateCandidateLocations(
   return rows[0] ? rowToCandidate(rows[0]) : null;
 }
 
+export interface ProfileDetailsUpdate {
+  fullName: string;
+  linkedinUrl: string;
+  targetRoles: string;
+  graduationYear: string;
+  workAuthorization: string;
+  notes: string;
+}
+
+/**
+ * Partial update for the non-identity profile fields — does NOT touch
+ * email, phone, resume_key, or external_id. Used by /profile to let the
+ * candidate edit resume-derived fields post-hoc without re-uploading.
+ */
+export async function updateCandidateDetails(
+  candidateId: string,
+  update: ProfileDetailsUpdate,
+): Promise<Candidate | null> {
+  const rows = (await sql`
+    UPDATE candidates
+    SET full_name = ${update.fullName},
+        linkedin_url = ${update.linkedinUrl},
+        target_roles = ${update.targetRoles || null},
+        graduation_year = ${update.graduationYear || null},
+        work_authorization = ${update.workAuthorization || null},
+        notes = ${update.notes || null}
+    WHERE id = ${candidateId}
+    RETURNING *
+  `) as unknown as CandidateRow[];
+
+  return rows[0] ? rowToCandidate(rows[0]) : null;
+}
+
 export async function updateAnswerOverride(
   candidateId: string,
   answerId: string,
@@ -406,6 +549,48 @@ export async function updateAnswerOverride(
   `) as unknown as SubmissionAnswerRow[];
 
   return rows[0] ? rowToAnswer(rows[0]) : null;
+}
+
+/**
+ * Flip a queued/failed listing to 'skipped' with a human-readable reason.
+ * Used by the sponsorship pre-filter — we don't want to enqueue listings
+ * that will definitely fail because the employer doesn't match the
+ * candidate's visa status.
+ */
+export async function markSavedListingSkipped(
+  candidateId: string,
+  savedListingId: string,
+  reason: string,
+): Promise<SavedListing | null> {
+  const rows = (await sql`
+    UPDATE saved_listings
+    SET status = 'skipped',
+        status_note = ${reason}
+    WHERE id = ${savedListingId}
+      AND candidate_id = ${candidateId}
+      AND status <> 'submitted'
+    RETURNING *
+  `) as unknown as SavedListingRow[];
+
+  return rows[0] ? rowToSaved(rows[0]) : null;
+}
+
+export async function manuallyMarkSubmitted(
+  candidateId: string,
+  savedListingId: string,
+): Promise<SavedListing | null> {
+  const rows = (await sql`
+    UPDATE saved_listings
+    SET status = 'submitted',
+        submitted_at = COALESCE(submitted_at, now()),
+        status_note = 'Manually marked as submitted by candidate.'
+    WHERE id = ${savedListingId}
+      AND candidate_id = ${candidateId}
+      AND status <> 'submitted'
+    RETURNING *
+  `) as unknown as SavedListingRow[];
+
+  return rows[0] ? rowToSaved(rows[0]) : null;
 }
 
 export async function removeSavedListing(

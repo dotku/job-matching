@@ -10,6 +10,7 @@ import {
 import {
   Candidate,
   CandidateInput,
+  OutcomeCounts,
   PortalCookie,
   SavedListing,
   SavedListingInput,
@@ -17,20 +18,46 @@ import {
   clearSavedForCandidate,
   getCandidateByExternalId,
   getCandidateCookiesEnc,
+  getOutcomeCounts,
   listAnswersForListing,
   listSavedForCandidate,
+  manuallyMarkSubmitted,
+  markSavedListingSkipped,
   removeSavedListing,
   resetSavedListing,
   saveListing,
   setCandidateCookiesEnc,
   updateAnswerOverride,
+  ProfileDetailsUpdate,
+  updateCandidateDetails,
   updateCandidateLocations,
   upsertCandidate,
 } from "@/lib/candidates";
 import { encryptJson } from "@/lib/crypto";
+import {
+  ByokKey,
+  ByokProvider,
+  addByokKey,
+  deleteByokKey as deleteByokKeyRow,
+  listByokKeys,
+  setActiveByokKey,
+} from "@/lib/llm-keys";
+import {
+  LlmBilling,
+  LlmUsageSummary,
+  RecentLlmCall,
+  getCandidateBilling,
+  getRecentLlmCalls,
+  getUsageSummary,
+} from "@/lib/llm-usage";
 import { QuotaState, getQuota } from "@/lib/quota";
 import { enqueueSubmit } from "@/lib/queue";
 import { getResumeSignedUrl, uploadResumePdf } from "@/lib/r2";
+import { verifyCandidateSubmissions } from "@/lib/verify-gmail";
+import {
+  listingExcludesCandidate,
+  parseVisaFromStoredLabel,
+} from "@/lib/visa";
 import {
   ParsedResume,
   ResumeParseError,
@@ -213,6 +240,7 @@ export interface LoadProfileResult {
   quota: QuotaState | null;
   resumeViewUrl: string;
   isAuthenticated: boolean;
+  outcomeCounts: OutcomeCounts | null;
 }
 
 export async function loadProfileAction(): Promise<LoadProfileResult> {
@@ -233,6 +261,9 @@ export async function loadProfileAction(): Promise<LoadProfileResult> {
     : null;
   const saved = candidate ? await listSavedForCandidate(candidate.id) : [];
   const quota = candidate ? await getQuota(candidate.id) : null;
+  const outcomeCounts = candidate
+    ? await getOutcomeCounts(candidate.id)
+    : null;
   const resumeViewUrl = candidate?.resumeKey
     ? await getResumeSignedUrl(candidate.resumeKey)
     : "";
@@ -241,6 +272,7 @@ export async function loadProfileAction(): Promise<LoadProfileResult> {
     candidate,
     saved,
     quota,
+    outcomeCounts,
     resumeViewUrl,
     isAuthenticated: identity.isAuthenticated,
   };
@@ -298,11 +330,31 @@ export async function submitAllQueuedAction(): Promise<
     }
 
     const saved = await listSavedForCandidate(candidate.id);
-    const queued = saved.filter((s) => s.status === "queued");
+    const allQueued = saved.filter((s) => s.status === "queued");
+
+    // Sponsorship pre-filter: mark queued listings whose sponsorship flag
+    // definitively rules out the candidate as 'skipped' with a clear
+    // reason, so we don't waste a worker submit + quota unit on a
+    // certain failure.
+    const visa = parseVisaFromStoredLabel(candidate.workAuthorization);
+    const skippedBySponsorship: string[] = [];
+    const eligible: typeof allQueued = [];
+
+    for (const s of allQueued) {
+      const check = listingExcludesCandidate(s.sponsorship, visa);
+
+      if (check.exclude) {
+        await markSavedListingSkipped(candidate.id, s.id, check.reason);
+        skippedBySponsorship.push(s.id);
+        continue;
+      }
+      eligible.push(s);
+    }
+
     const budget = Math.min(
       quota.remainingToday,
       quota.remainingThisWeek,
-      queued.length,
+      eligible.length,
     );
 
     if (budget <= 0) {
@@ -310,15 +362,18 @@ export async function submitAllQueuedAction(): Promise<
         ok: true,
         data: {
           enqueued: 0,
-          skipped: queued.length,
-          reason: "No submissions left in your daily/weekly quota.",
+          skipped: eligible.length + skippedBySponsorship.length,
+          reason:
+            eligible.length === 0 && skippedBySponsorship.length > 0
+              ? `Skipped ${skippedBySponsorship.length} listing${skippedBySponsorship.length === 1 ? "" : "s"} that don't match your visa status. Nothing eligible to submit.`
+              : "No submissions left in your daily/weekly quota.",
         },
       };
     }
 
     let enqueued = 0;
 
-    for (const s of queued.slice(0, budget)) {
+    for (const s of eligible.slice(0, budget)) {
       try {
         await enqueueSubmit({
           candidateId: candidate.id,
@@ -333,12 +388,19 @@ export async function submitAllQueuedAction(): Promise<
     }
 
     revalidatePath("/apply");
+    revalidatePath("/dashboard");
+
+    const extraReason =
+      skippedBySponsorship.length > 0
+        ? `Also skipped ${skippedBySponsorship.length} listing${skippedBySponsorship.length === 1 ? "" : "s"} that don't match your visa status.`
+        : undefined;
 
     return {
       ok: true,
       data: {
         enqueued,
-        skipped: queued.length - enqueued,
+        skipped: eligible.length - enqueued + skippedBySponsorship.length,
+        reason: extraReason,
       },
     };
   } catch (e) {
@@ -350,8 +412,10 @@ export async function submitAllQueuedAction(): Promise<
 
 export async function queueListingsAction(
   inputs: SavedListingInput[],
-): Promise<ActionResult<{ queued: number }>> {
-  if (inputs.length === 0) return { ok: true, data: { queued: 0 } };
+): Promise<ActionResult<{ queued: number; skippedBySponsorship: number }>> {
+  if (inputs.length === 0) {
+    return { ok: true, data: { queued: 0, skippedBySponsorship: 0 } };
+  }
   try {
     const { externalId } = await ensureIdentity();
     const candidate = await getCandidateByExternalId(externalId);
@@ -362,19 +426,30 @@ export async function queueListingsAction(
         error: "Save your profile first before queueing internships.",
       };
     }
+
+    const visa = parseVisaFromStoredLabel(candidate.workAuthorization);
     let queued = 0;
+    let skippedBySponsorship = 0;
 
     for (const input of inputs) {
       try {
-        await saveListing(candidate.id, input);
-        queued += 1;
+        const saved = await saveListing(candidate.id, input);
+        const check = listingExcludesCandidate(saved.sponsorship ?? null, visa);
+
+        if (check.exclude) {
+          await markSavedListingSkipped(candidate.id, saved.id, check.reason);
+          skippedBySponsorship += 1;
+        } else {
+          queued += 1;
+        }
       } catch (e) {
         console.error("[queueListings] skip", input.listingId, e);
       }
     }
     revalidatePath("/apply");
+    revalidatePath("/dashboard");
 
-    return { ok: true, data: { queued } };
+    return { ok: true, data: { queued, skippedBySponsorship } };
   } catch (e) {
     const message = e instanceof Error ? e.message : "Unknown error";
 
@@ -399,6 +474,34 @@ export async function removeSavedListingAction(
     revalidatePath("/apply");
 
     return { ok: true, data: true };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Unknown error",
+    };
+  }
+}
+
+export async function markListingSubmittedAction(
+  savedListingId: string,
+): Promise<ActionResult<SavedListing>> {
+  try {
+    const { externalId } = await ensureIdentity();
+    const candidate = await getCandidateByExternalId(externalId);
+
+    if (!candidate) return { ok: false, error: "No profile." };
+    const updated = await manuallyMarkSubmitted(candidate.id, savedListingId);
+
+    if (!updated) {
+      return {
+        ok: false,
+        error: "Listing already submitted or not found.",
+      };
+    }
+    revalidatePath("/dashboard");
+    revalidatePath("/apply");
+
+    return { ok: true, data: updated };
   } catch (e) {
     return {
       ok: false,
@@ -620,6 +723,110 @@ export async function getAutoApplyCookiesStatusAction(): Promise<
   }
 }
 
+export async function verifySubmissionsViaGmailAction(): Promise<
+  ActionResult<{
+    scanned: number;
+    updated: number;
+    llmCalls: number;
+    matched: {
+      company: string;
+      subject: string;
+      from: string;
+      rationale: string;
+      matchedListingCompany: string;
+    }[];
+    scannedEmails: {
+      from: string;
+      subject: string;
+      outcome: "confirmed" | "not-confirmation" | "no-matching-listing";
+      llmCompanyName: string | null;
+      rationale: string;
+      provider: string;
+      model: string;
+      inputTokens: number;
+      outputTokens: number;
+      byok: boolean;
+      costMicroCents: number;
+    }[];
+    skippedReason?: string;
+  }>
+> {
+  try {
+    const identity = await ensureIdentity();
+
+    if (!identity.isAuthenticated || !identity.externalId) {
+      return { ok: false, error: "Sign in with Google first." };
+    }
+    const candidate = await getCandidateByExternalId(identity.externalId);
+
+    if (!candidate) return { ok: false, error: "No profile." };
+
+    const result = await verifyCandidateSubmissions(
+      candidate.id,
+      identity.externalId,
+    );
+
+    revalidatePath("/dashboard");
+
+    return { ok: true, data: result };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Unknown error";
+
+    if (/Gmail access/.test(msg)) {
+      return {
+        ok: false,
+        error:
+          "Gmail access not authorized. Log out and log in again to grant Gmail read permission.",
+      };
+    }
+
+    return { ok: false, error: msg };
+  }
+}
+
+export async function updateProfileDetailsAction(
+  update: ProfileDetailsUpdate,
+): Promise<ActionResult<Candidate>> {
+  try {
+    const { externalId } = await ensureIdentity();
+    const candidate = await getCandidateByExternalId(externalId);
+
+    if (!candidate) return { ok: false, error: "No profile yet." };
+
+    const fullName = update.fullName.trim();
+    const linkedinUrl = update.linkedinUrl.trim();
+
+    if (!fullName) return { ok: false, error: "Full name is required." };
+    if (!/linkedin\.com/.test(linkedinUrl)) {
+      return {
+        ok: false,
+        error: "LinkedIn URL should be a linkedin.com link.",
+      };
+    }
+
+    const updated = await updateCandidateDetails(candidate.id, {
+      fullName,
+      linkedinUrl,
+      targetRoles: update.targetRoles.trim(),
+      graduationYear: update.graduationYear.trim(),
+      workAuthorization: update.workAuthorization.trim(),
+      notes: update.notes.trim(),
+    });
+
+    if (!updated) return { ok: false, error: "Update failed." };
+    revalidatePath("/profile");
+    revalidatePath("/dashboard");
+    revalidatePath("/apply");
+
+    return { ok: true, data: updated };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Unknown error",
+    };
+  }
+}
+
 export async function updateTargetLocationsAction(
   targetLocations: string,
 ): Promise<ActionResult<Candidate>> {
@@ -639,6 +846,150 @@ export async function updateTargetLocationsAction(
     revalidatePath("/internships");
 
     return { ok: true, data: updated };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Unknown error",
+    };
+  }
+}
+
+export interface LlmStatus {
+  creditsMicroCents: number;
+  activeKey: ByokKey | null;
+  keys: ByokKey[];
+  usage: LlmUsageSummary;
+  recentCalls: RecentLlmCall[];
+}
+
+export async function getLlmStatusAction(): Promise<ActionResult<LlmStatus>> {
+  try {
+    const { externalId } = await ensureIdentity();
+    const candidate = await getCandidateByExternalId(externalId);
+
+    if (!candidate) return { ok: false, error: "No profile." };
+    const billing: LlmBilling | null = await getCandidateBilling(candidate.id);
+
+    if (!billing) return { ok: false, error: "No profile." };
+    const [keys, usage, recentCalls] = await Promise.all([
+      listByokKeys(candidate.id),
+      getUsageSummary(candidate.id),
+      getRecentLlmCalls(candidate.id, 20),
+    ]);
+    const activeKey = keys.find((k) => k.isActive) ?? null;
+
+    return {
+      ok: true,
+      data: {
+        creditsMicroCents: billing.creditsMicroCents,
+        activeKey,
+        keys,
+        usage,
+        recentCalls,
+      },
+    };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Unknown error",
+    };
+  }
+}
+
+export async function addByokKeyAction(params: {
+  provider: ByokProvider;
+  model: string;
+  apiKey: string;
+  label?: string;
+}): Promise<ActionResult<ByokKey>> {
+  try {
+    const { externalId } = await ensureIdentity();
+    const candidate = await getCandidateByExternalId(externalId);
+
+    if (!candidate) return { ok: false, error: "No profile." };
+
+    const provider = params.provider;
+    const model = (params.model || "").trim();
+    const apiKey = (params.apiKey || "").trim();
+    const label = (params.label || "").trim() || null;
+
+    if (
+      provider !== "cerebras" &&
+      provider !== "openai" &&
+      provider !== "gemini" &&
+      provider !== "openrouter"
+    ) {
+      return { ok: false, error: "Unsupported provider." };
+    }
+    if (!model) return { ok: false, error: "Model name is required." };
+    if (apiKey.length < 20) {
+      return {
+        ok: false,
+        error: "That doesn't look like a valid API key. Paste the full key from your provider.",
+      };
+    }
+
+    // API keys are encrypted at rest with the same AES-256-GCM envelope as
+    // the portal cookies — the decryption key never leaves the server.
+    const enc = encryptJson(apiKey);
+    const created = await addByokKey({
+      candidateId: candidate.id,
+      provider,
+      model,
+      apiKeyEnc: enc,
+      label,
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/apply");
+
+    return { ok: true, data: created };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Unknown error",
+    };
+  }
+}
+
+export async function setActiveByokKeyAction(
+  keyId: string,
+): Promise<ActionResult<true>> {
+  try {
+    const { externalId } = await ensureIdentity();
+    const candidate = await getCandidateByExternalId(externalId);
+
+    if (!candidate) return { ok: false, error: "No profile." };
+    const ok = await setActiveByokKey(candidate.id, keyId);
+
+    if (!ok) return { ok: false, error: "Key not found." };
+    revalidatePath("/dashboard");
+    revalidatePath("/apply");
+
+    return { ok: true, data: true };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Unknown error",
+    };
+  }
+}
+
+export async function deleteByokKeyAction(
+  keyId: string,
+): Promise<ActionResult<true>> {
+  try {
+    const { externalId } = await ensureIdentity();
+    const candidate = await getCandidateByExternalId(externalId);
+
+    if (!candidate) return { ok: false, error: "No profile." };
+    const ok = await deleteByokKeyRow(candidate.id, keyId);
+
+    if (!ok) return { ok: false, error: "Key not found." };
+    revalidatePath("/dashboard");
+    revalidatePath("/apply");
+
+    return { ok: true, data: true };
   } catch (e) {
     return {
       ok: false,

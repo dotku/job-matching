@@ -62,11 +62,44 @@ export async function listRecentFailures(
   }));
 }
 
+export interface OutcomeFunnel {
+  submitted: number;      // everything past the submit pipeline (pending + downstream)
+  pending: number;
+  confirmed: number;
+  screening: number;
+  interviewing: number;
+  offer: number;
+  accepted: number;
+  declined: number;
+  rejected: number;
+  ghosted: number;
+}
+
+export interface LlmSpendSummary {
+  totalCalls: number;
+  byokCalls: number;
+  paidCalls: number;
+  totalSpentMicroCents: number;
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  /** Candidates with at least one active BYOK key. */
+  byokCandidates: number;
+  /** Top 8 models by call count. */
+  byModel: {
+    provider: string;
+    model: string;
+    calls: number;
+    byokCalls: number;
+    costMicroCents: number;
+  }[];
+}
+
 export interface AdminSummary {
   byStatus: { status: string; count: number }[];
   byPortal: { portal: string; count: number; failures: number }[];
   topFailureReasons: { reason: string; count: number }[];
   totalCandidates: number;
+  outcomeFunnel: OutcomeFunnel;
 }
 
 function portalFromUrl(url: string): string {
@@ -152,10 +185,117 @@ export async function computeAdminSummary(): Promise<AdminSummary> {
     SELECT count(*)::int AS n FROM candidates
   `) as unknown as { n: number }[];
 
+  const outcomeFunnel = await computeOutcomeFunnel();
+
   return {
     byStatus: statusRows.map((r) => ({ status: r.status, count: r.n })),
     byPortal,
     topFailureReasons,
     totalCandidates: cnd[0]?.n ?? 0,
+    outcomeFunnel,
+  };
+}
+
+async function computeOutcomeFunnel(): Promise<OutcomeFunnel> {
+  const rows = (await sql`
+    SELECT outcome, count(*)::int AS n
+    FROM saved_listings
+    WHERE status = 'submitted'
+    GROUP BY outcome
+  `) as unknown as { outcome: string; n: number }[];
+
+  const f: OutcomeFunnel = {
+    submitted: 0,
+    pending: 0,
+    confirmed: 0,
+    screening: 0,
+    interviewing: 0,
+    offer: 0,
+    accepted: 0,
+    declined: 0,
+    rejected: 0,
+    ghosted: 0,
+  };
+
+  for (const r of rows) {
+    f.submitted += r.n;
+    if (r.outcome in f) {
+      (f as unknown as Record<string, number>)[r.outcome] = r.n;
+    }
+  }
+
+  return f;
+}
+
+export async function computeLlmSpend(): Promise<LlmSpendSummary> {
+  const totals = (await sql`
+    SELECT
+      count(*)::int AS calls,
+      COALESCE(SUM(CASE WHEN byok THEN 1 ELSE 0 END), 0)::int AS byok_calls,
+      COALESCE(SUM(cost_micro_cents), 0) AS spent,
+      COALESCE(SUM(input_tokens), 0)::bigint AS input_tokens,
+      COALESCE(SUM(output_tokens), 0)::bigint AS output_tokens
+    FROM llm_usage
+  `) as unknown as {
+    calls: number;
+    byok_calls: number;
+    spent: string | number;
+    input_tokens: string | number;
+    output_tokens: string | number;
+  }[];
+
+  const modelRows = (await sql`
+    SELECT provider, model,
+      count(*)::int AS calls,
+      COALESCE(SUM(CASE WHEN byok THEN 1 ELSE 0 END), 0)::int AS byok_calls,
+      COALESCE(SUM(cost_micro_cents), 0) AS cost_micro_cents
+    FROM llm_usage
+    GROUP BY provider, model
+    ORDER BY calls DESC
+    LIMIT 8
+  `) as unknown as {
+    provider: string;
+    model: string;
+    calls: number;
+    byok_calls: number;
+    cost_micro_cents: string | number;
+  }[];
+
+  const byokCandidateRows = (await sql`
+    SELECT count(DISTINCT candidate_id)::int AS n
+    FROM candidate_byok_keys
+    WHERE is_active = true
+  `) as unknown as { n: number }[];
+
+  const t = totals[0];
+  const totalSpent =
+    typeof t?.spent === "string" ? parseInt(t.spent, 10) : (t?.spent ?? 0);
+  const totalIn =
+    typeof t?.input_tokens === "string"
+      ? parseInt(t.input_tokens, 10)
+      : Number(t?.input_tokens ?? 0);
+  const totalOut =
+    typeof t?.output_tokens === "string"
+      ? parseInt(t.output_tokens, 10)
+      : Number(t?.output_tokens ?? 0);
+
+  return {
+    totalCalls: t?.calls ?? 0,
+    byokCalls: t?.byok_calls ?? 0,
+    paidCalls: (t?.calls ?? 0) - (t?.byok_calls ?? 0),
+    totalSpentMicroCents: totalSpent,
+    totalInputTokens: totalIn,
+    totalOutputTokens: totalOut,
+    byokCandidates: byokCandidateRows[0]?.n ?? 0,
+    byModel: modelRows.map((r) => ({
+      provider: r.provider,
+      model: r.model,
+      calls: r.calls,
+      byokCalls: r.byok_calls,
+      costMicroCents:
+        typeof r.cost_micro_cents === "string"
+          ? parseInt(r.cost_micro_cents, 10)
+          : r.cost_micro_cents,
+    })),
   };
 }

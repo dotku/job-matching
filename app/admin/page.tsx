@@ -2,7 +2,11 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { readIdentity } from "@/lib/identity";
-import { computeAdminSummary, listRecentFailures } from "@/lib/admin";
+import {
+  AdminFailureRow,
+  computeAdminSummary,
+  listRecentFailures,
+} from "@/lib/admin";
 
 export const metadata: Metadata = {
   title: "Admin — Pipeline diagnostics",
@@ -58,12 +62,22 @@ export default async function AdminPage() {
 
   return (
     <section className="py-6 max-w-6xl mx-auto flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl md:text-4xl font-semibold">Admin</h1>
-        <p className="text-default-500 text-sm md:text-base">
-          Pipeline diagnostics across all candidates. Signed in as{" "}
-          <code className="text-xs">{identity.email}</code>.
-        </p>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold">Admin</h1>
+          <p className="text-default-500 text-sm md:text-base">
+            Submit pipeline diagnostics across all candidates. Signed in as{" "}
+            <code className="text-xs">{identity.email}</code>.
+          </p>
+        </div>
+        <nav className="flex items-center gap-2 text-xs">
+          <a
+            className="px-3 py-1.5 rounded-full bg-default-100 text-default-700 hover:bg-default-200"
+            href="/admin/llm"
+          >
+            LLM usage →
+          </a>
+        </nav>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -89,6 +103,42 @@ export default async function AdminPage() {
           value={statusCount(summary, "failed")}
         />
       </div>
+
+      <Panel
+        title={`Outcome funnel (${summary.outcomeFunnel.submitted} submitted)`}
+        subtitle="Where submitted applications stand today — pending means submitted but no downstream signal yet."
+      >
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          <FunnelCell
+            label="Awaiting"
+            n={summary.outcomeFunnel.pending + summary.outcomeFunnel.confirmed}
+            sub={`${summary.outcomeFunnel.confirmed} confirmed + ${summary.outcomeFunnel.pending} pending`}
+            tone="default"
+          />
+          <FunnelCell
+            label="Screening"
+            n={summary.outcomeFunnel.screening}
+            tone="warning"
+          />
+          <FunnelCell
+            label="Interview"
+            n={summary.outcomeFunnel.interviewing}
+            tone="primary"
+          />
+          <FunnelCell
+            label="Offer"
+            n={summary.outcomeFunnel.offer + summary.outcomeFunnel.accepted}
+            sub={`${summary.outcomeFunnel.accepted} accepted · ${summary.outcomeFunnel.declined} declined`}
+            tone="success"
+          />
+          <FunnelCell
+            label="Rejected / Ghosted"
+            n={summary.outcomeFunnel.rejected + summary.outcomeFunnel.ghosted}
+            sub={`${summary.outcomeFunnel.rejected} rejected · ${summary.outcomeFunnel.ghosted} ghosted`}
+            tone="danger"
+          />
+        </div>
+      </Panel>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Panel title="By portal">
@@ -139,96 +189,115 @@ export default async function AdminPage() {
 
       <Panel
         title={`Recent failures (${failures.length})`}
-        subtitle="Latest failed or skipped submissions across all candidates"
+        subtitle="Latest failed or skipped submissions across all candidates. Click a screenshot to open full size."
       >
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead className="text-default-500 text-left">
-              <tr>
-                <th className="py-2 pr-3">When</th>
-                <th className="py-2 pr-3">Candidate</th>
-                <th className="py-2 pr-3">Portal</th>
-                <th className="py-2 pr-3">Company / Role</th>
-                <th className="py-2 pr-3">Note</th>
-                <th className="py-2 pr-3">Shot</th>
-                <th className="py-2">Video</th>
-              </tr>
-            </thead>
-            <tbody>
-              {failures.map((f) => {
-                const shot = extractScreenshot(f.statusNote);
-                const video = extractVideo(f.statusNote);
-                const noteCleaned = f.statusNote
-                  ? f.statusNote
-                      .replace(/\s*\|\s*screenshot:\s*\S+/, "")
-                      .replace(/\s*\|\s*video:\s*\S+/, "")
-                  : "";
-
-                return (
-                  <tr
-                    key={f.id}
-                    className="border-t border-default-100 align-top"
-                  >
-                    <td className="py-2 pr-3 whitespace-nowrap">
-                      {new Date(f.savedAt).toLocaleDateString()}
-                    </td>
-                    <td className="py-2 pr-3">
-                      <div className="font-medium">{f.candidateName}</div>
-                      <div className="text-default-500">
-                        {f.candidateEmail}
-                      </div>
-                    </td>
-                    <td className="py-2 pr-3 font-mono">{hostOf(f.url)}</td>
-                    <td className="py-2 pr-3">
-                      <a
-                        className="font-medium text-primary hover:underline"
-                        href={f.url}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        {f.companyName}
-                      </a>
-                      <div className="text-default-500">{f.title}</div>
-                    </td>
-                    <td className="py-2 pr-3 text-default-700 max-w-md break-words">
-                      {noteCleaned || "(no note)"}
-                    </td>
-                    <td className="py-2 pr-3 whitespace-nowrap">
-                      {shot ? (
-                        <a
-                          className="text-primary underline"
-                          href={shot}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          view
-                        </a>
-                      ) : (
-                        <span className="text-default-300">—</span>
-                      )}
-                    </td>
-                    <td className="py-2 whitespace-nowrap">
-                      {video ? (
-                        <a
-                          className="text-primary underline"
-                          href={video}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          play
-                        </a>
-                      ) : (
-                        <span className="text-default-300">—</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        {failures.length === 0 ? (
+          <p className="text-sm text-default-500 text-center py-8">
+            No recent failures. 🎉
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {failures.map((f) => (
+              <FailureCard key={f.id} row={f} />
+            ))}
+          </div>
+        )}
       </Panel>
     </section>
+  );
+}
+
+function FailureCard({ row }: { row: AdminFailureRow }) {
+  const shot = extractScreenshot(row.statusNote);
+  const video = extractVideo(row.statusNote);
+  const noteCleaned = row.statusNote
+    ? row.statusNote
+        .replace(/\s*\|\s*screenshot:\s*\S+/, "")
+        .replace(/\s*\|\s*video:\s*\S+/, "")
+    : "";
+  const statusTone =
+    row.status === "failed"
+      ? "bg-danger-100 text-danger-700"
+      : "bg-default-200 text-default-700";
+
+  return (
+    <div className="rounded-large border border-default-200 bg-content1 overflow-hidden flex flex-col">
+      {shot ? (
+        <a
+          className="block relative bg-default-100 aspect-[16/10] overflow-hidden group"
+          href={shot}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            alt={`${row.companyName} failure screenshot`}
+            className="w-full h-full object-cover object-top group-hover:opacity-90 transition-opacity"
+            loading="lazy"
+            src={shot}
+          />
+          <span className="absolute top-2 right-2 text-[10px] bg-black/60 text-white px-1.5 py-0.5 rounded-full">
+            open full
+          </span>
+        </a>
+      ) : (
+        <div className="bg-default-100 aspect-[16/10] flex items-center justify-center text-xs text-default-400">
+          no screenshot
+        </div>
+      )}
+
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <a
+              className="font-medium text-primary hover:underline block truncate"
+              href={row.url}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {row.companyName}
+            </a>
+            <div className="text-xs text-default-500 truncate">{row.title}</div>
+          </div>
+          <span
+            className={`text-[10px] px-1.5 py-0.5 rounded-full shrink-0 uppercase tracking-wide ${statusTone}`}
+          >
+            {row.status}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 text-[11px] text-default-500 flex-wrap">
+          <span className="font-mono">{hostOf(row.url)}</span>
+          <span>·</span>
+          <span>{new Date(row.savedAt).toLocaleDateString()}</span>
+          {video && (
+            <>
+              <span>·</span>
+              <a
+                className="text-primary hover:underline inline-flex items-center gap-1"
+                href={video}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                ▶ video
+              </a>
+            </>
+          )}
+        </div>
+
+        <div className="text-xs text-default-600">
+          <span className="text-default-500">Candidate:</span>{" "}
+          <span className="font-medium">{row.candidateName}</span>{" "}
+          <span className="text-default-500">({row.candidateEmail})</span>
+        </div>
+
+        {noteCleaned && (
+          <p className="text-xs text-default-700 leading-snug break-words mt-auto pt-1 border-t border-default-100">
+            {noteCleaned}
+          </p>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -267,6 +336,37 @@ function KpiCard({
     </div>
   );
 }
+
+function FunnelCell({
+  label,
+  n,
+  sub,
+  tone,
+}: {
+  label: string;
+  n: number;
+  sub?: string;
+  tone: "default" | "primary" | "success" | "danger" | "warning";
+}) {
+  const toneClasses: Record<typeof tone, string> = {
+    default: "bg-default-100 text-default-700",
+    primary: "bg-primary-100 text-primary-700",
+    success: "bg-success-100 text-success-700",
+    danger: "bg-danger-100 text-danger-700",
+    warning: "bg-warning-100 text-warning-700",
+  };
+
+  return (
+    <div className={`rounded-medium p-3 ${toneClasses[tone]}`}>
+      <div className="text-[10px] uppercase tracking-wide opacity-80">
+        {label}
+      </div>
+      <div className="text-2xl font-semibold tabular-nums">{n}</div>
+      {sub && <div className="text-[10px] opacity-70 mt-0.5">{sub}</div>}
+    </div>
+  );
+}
+
 
 function Panel({
   title,

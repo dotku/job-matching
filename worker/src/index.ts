@@ -11,6 +11,7 @@ import {
   getCandidate,
   getCandidateCookieBlob,
   getSavedListingSummary,
+  hasRecentSubmission,
   insertSubmissionAnswer,
   markFailed,
   markSkipped,
@@ -104,6 +105,34 @@ async function processJobInner(job: Job<SubmitJobPayload>) {
     return;
   }
 
+  // 90-day dedup: if we've already submitted to this company within the
+  // window, mark skipped so we don't burn quota on a duplicate.
+  const listingSummaryForDedup = await getSavedListingSummary(savedListingId);
+  const dedupCompany = listingSummaryForDedup?.company_name ?? "";
+
+  if (dedupCompany) {
+    const prior = await hasRecentSubmission(
+      candidateId,
+      savedListingId,
+      dedupCompany,
+      90,
+    );
+
+    if (prior) {
+      const when = new Date(prior.submittedAt).toLocaleDateString();
+
+      await markSkipped(
+        savedListingId,
+        `Already submitted to ${dedupCompany} ("${prior.title}") on ${when} — within 90-day dedup window.`,
+      );
+      console.log(
+        `[job ${job.id}] dedup: skip (prior ${dedupCompany} on ${when})`,
+      );
+
+      return;
+    }
+  }
+
   // Mark the row as in-progress so the dashboard shows live state while
   // Playwright is running. `markSubmitting` is a no-op if the row already
   // transitioned to a terminal state (submitted/failed/skipped).
@@ -113,9 +142,8 @@ async function processJobInner(job: Job<SubmitJobPayload>) {
   );
 
   const resumePdf = await downloadResume(resumeKey);
-  const listingSummary = await getSavedListingSummary(savedListingId);
-  const companyName = listingSummary?.company_name ?? "the company";
-  const roleTitle = listingSummary?.title ?? "this role";
+  const companyName = listingSummaryForDedup?.company_name ?? "the company";
+  const roleTitle = listingSummaryForDedup?.title ?? "this role";
 
   let resumeText = "";
 
@@ -235,7 +263,10 @@ async function processJobInner(job: Job<SubmitJobPayload>) {
     if (result.status === "submitted") {
       await markSubmitted(savedListingId, noteWithVideo);
     } else if (result.status === "failed") {
-      await markFailed(savedListingId, noteWithVideo);
+      await markFailed(savedListingId, noteWithVideo, {
+        reason: result.failureReason,
+        screenshotKey: result.failureScreenshotKey,
+      });
     } else {
       await markSkipped(savedListingId, noteWithVideo);
       console.log(`[job ${job.id}] skipped: ${result.note}`);

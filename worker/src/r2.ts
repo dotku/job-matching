@@ -55,7 +55,7 @@ export async function getResumeSignedUrl(
 export async function uploadDebugShot(
   savedListingId: string,
   buffer: Buffer,
-): Promise<string> {
+): Promise<{ key: string; url: string }> {
   const key = `debug/${savedListingId}/${Date.now()}.png`;
 
   await client.send(
@@ -67,11 +67,13 @@ export async function uploadDebugShot(
     }),
   );
 
-  return getSignedUrl(
+  const url = await getSignedUrl(
     client,
     new GetObjectCommand({ Bucket: config.r2.bucket, Key: key }),
     { expiresIn: 7 * 24 * 60 * 60 },
   );
+
+  return { key, url };
 }
 
 /**

@@ -1,0 +1,28 @@
+name = "job-matching-crons"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Crons — the same schedules formerly in vercel.json.
+# cleanup-resumes: daily at 03:00 UTC
+# verify-submissions: every 4 hours
+[triggers]
+crons = ["0 3 * * *", "0 */4 * * *"]
+
+# Native R2 binding — way simpler than @aws-sdk for cleanup.
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "job-matching"
+
+# Observability: tail logs in `wrangler tail` without opt-in flag.
+[observability]
+enabled = true
+
+# Secrets (set via `wrangler secret put <NAME>`):
+#   DATABASE_URL
+#   AUTH0_DOMAIN
+#   AUTH0_MGMT_CLIENT_ID
+#   AUTH0_MGMT_CLIENT_SECRET
+#   AI_GATEWAY_API_KEY         (Vercel AI Gateway, for non-BYOK email-match)
+#   COOKIE_ENC_KEY             (32-byte hex; MUST match Next.js app value)
+#   R2_PREFIX (optional, default "resumes/")

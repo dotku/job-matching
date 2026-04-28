@@ -24,11 +24,18 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ApplyPage() {
-  const { candidate, saved, quota, resumeViewUrl, isAuthenticated } =
-    await loadProfileAction();
+  const {
+    candidate,
+    saved,
+    quota,
+    resumeViewUrl,
+    isAuthenticated,
+    outcomeCounts,
+  } = await loadProfileAction();
   const cookiesBlob = candidate
     ? await getCandidateCookiesEnc(candidate.id)
     : null;
+  const submittedTotal = saved.filter((s) => s.status === "submitted").length;
 
   return (
     <section className="py-6 max-w-2xl mx-auto">
@@ -109,13 +116,66 @@ export default async function ApplyPage() {
       />
 
       {candidate && (
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-4">
           <AutoApplyCookies initiallyHasCookies={!!cookiesBlob} />
+          <div className="rounded-large border border-default-200 bg-default-50 p-4 text-sm text-default-600 flex items-center justify-between gap-2">
+            <span>
+              Manage preferences, AI credits &amp; BYOK providers in Profile.
+            </span>
+            <NextLink
+              className="text-xs px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:opacity-90"
+              href="/profile"
+            >
+              Go to Profile →
+            </NextLink>
+          </div>
+        </div>
+      )}
+
+      {outcomeCounts && submittedTotal > 0 && (
+        <div className="mt-10 mb-6 rounded-large border border-default-200 bg-content1 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-semibold">
+              Application pipeline ({submittedTotal} submitted)
+            </h2>
+          </div>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 text-center">
+            <PipelineStat
+              label="Awaiting"
+              n={outcomeCounts.pending + outcomeCounts.confirmed}
+              tone="default"
+            />
+            <PipelineStat
+              label="Screening"
+              n={outcomeCounts.screening}
+              tone="warning"
+            />
+            <PipelineStat
+              label="Interview"
+              n={outcomeCounts.interviewing}
+              tone="primary"
+            />
+            <PipelineStat
+              label="Offer"
+              n={outcomeCounts.offer + outcomeCounts.accepted}
+              tone="success"
+            />
+            <PipelineStat
+              label="Rejected"
+              n={outcomeCounts.rejected}
+              tone="danger"
+            />
+            <PipelineStat
+              label="Ghosted"
+              n={outcomeCounts.ghosted}
+              tone="default"
+            />
+          </div>
         </div>
       )}
 
       {saved.length > 0 && (
-        <div className="mt-10">
+        <div className="mt-6">
           <h2 className="text-lg font-semibold mb-3">
             Queued internships ({saved.length})
           </h2>
@@ -137,15 +197,7 @@ export default async function ApplyPage() {
                     {s.category}
                   </div>
                 </div>
-                <span
-                  className={
-                    s.status === "submitted"
-                      ? "text-xs px-2 py-1 rounded-full bg-success-100 text-success-700"
-                      : "text-xs px-2 py-1 rounded-full bg-default-200 text-default-700"
-                  }
-                >
-                  {s.status}
-                </span>
+                <StatusBadge listing={s} />
               </li>
             ))}
           </ul>
@@ -157,6 +209,93 @@ export default async function ApplyPage() {
         </div>
       )}
     </section>
+  );
+}
+
+type Tone = "default" | "primary" | "success" | "warning" | "danger";
+
+const TONE_CLASSES: Record<Tone, string> = {
+  default: "bg-default-200 text-default-700",
+  primary: "bg-primary-50 text-primary-700",
+  success: "bg-success-100 text-success-700",
+  warning: "bg-warning-100 text-warning-700",
+  danger: "bg-danger-100 text-danger-700",
+};
+
+function PipelineStat({
+  label,
+  n,
+  tone,
+}: {
+  label: string;
+  n: number;
+  tone: Tone;
+}) {
+  return (
+    <div
+      className={`rounded-medium px-2 py-2 ${TONE_CLASSES[tone]}`}
+      title={label}
+    >
+      <div className="text-xl font-bold tabular-nums leading-none">{n}</div>
+      <div className="text-[10px] uppercase tracking-wide mt-1">{label}</div>
+    </div>
+  );
+}
+
+interface StatusBadgeListing {
+  status: string;
+  outcome: string;
+  failureReason: string | null;
+}
+
+function StatusBadge({ listing }: { listing: StatusBadgeListing }) {
+  if (listing.status !== "submitted") {
+    const tone: Tone =
+      listing.status === "failed"
+        ? "danger"
+        : listing.status === "submitting"
+          ? "primary"
+          : "default";
+    const title =
+      listing.status === "failed" && listing.failureReason
+        ? listing.failureReason
+        : undefined;
+
+    return (
+      <span
+        className={`shrink-0 text-xs px-2 py-1 rounded-full ${TONE_CLASSES[tone]}`}
+        title={title}
+      >
+        {listing.status}
+      </span>
+    );
+  }
+
+  const tone: Tone =
+    listing.outcome === "offer" || listing.outcome === "accepted"
+      ? "success"
+      : listing.outcome === "interviewing"
+        ? "primary"
+        : listing.outcome === "screening"
+          ? "warning"
+          : listing.outcome === "rejected" || listing.outcome === "ghosted"
+            ? "danger"
+            : "default";
+  const label =
+    listing.outcome === "pending"
+      ? "Submitted"
+      : listing.outcome === "offer"
+        ? "Offer 🎉"
+        : listing.outcome === "accepted"
+          ? "Accepted ✨"
+          : listing.outcome.charAt(0).toUpperCase() + listing.outcome.slice(1);
+
+  return (
+    <span
+      className={`shrink-0 text-xs px-2 py-1 rounded-full ${TONE_CLASSES[tone]}`}
+    >
+      {label}
+    </span>
   );
 }
 

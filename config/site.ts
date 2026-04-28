@@ -27,6 +27,10 @@ export const siteConfig = {
       href: "/dashboard",
     },
     {
+      label: "Profile",
+      href: "/profile",
+    },
+    {
       label: "Pricing",
       href: "/pricing",
     },
@@ -43,6 +47,10 @@ export const siteConfig = {
     {
       label: "Dashboard",
       href: "/dashboard",
+    },
+    {
+      label: "Profile",
+      href: "/profile",
     },
     {
       label: "Pricing",

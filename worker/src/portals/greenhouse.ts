@@ -500,6 +500,7 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
   if (!filledFirst) {
     return {
       status: "failed",
+      failureReason: "form_not_found",
       note: "Could not find the application form on this listing (first_name field missing).",
     };
   }
@@ -558,7 +559,11 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
   }
 
   if (!resumeUploaded) {
-    return { status: "failed", note: "No resume file input found on the page." };
+    return {
+      status: "failed",
+      failureReason: "field_missing",
+      note: "No resume file input found on the page.",
+    };
   }
 
   await page.waitForTimeout(UPLOAD_PARSE_WAIT);
@@ -607,7 +612,12 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
     break;
   }
 
-  if (!clicked) return { status: "failed", note: "Submit button not found." };
+  if (!clicked)
+    return {
+      status: "failed",
+      failureReason: "submit_button_missing",
+      note: "Submit button not found.",
+    };
 
   const urlBeforeSubmit = page.url();
   const deadline = Date.now() + SUBMIT_RESULT_TIMEOUT;
@@ -638,17 +648,21 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
 
     return {
       status: "failed",
+      failureReason: "validation_errors",
       note: `Form validation errors: ${errors}${answerIssue}${customSummary}`,
     };
   }
 
   // Inconclusive: capture a screenshot for human review.
   let shotUrl = "";
+  let shotKey: string | undefined;
 
   try {
     const buf = await page.screenshot({ fullPage: true, timeout: 5000 });
+    const shot = await ctx.captureDebugShot(Buffer.from(buf));
 
-    shotUrl = await ctx.captureDebugShot(Buffer.from(buf));
+    shotUrl = shot.url;
+    shotKey = shot.key;
   } catch (e) {
     console.warn(
       "[greenhouse] screenshot capture failed:",
@@ -658,6 +672,8 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
 
   return {
     status: "failed",
+    failureReason: "no_confirmation",
+    failureScreenshotKey: shotKey,
     note:
       `Submit clicked but no confirmation or error within timeout.${customSummary}` +
       (shotUrl ? ` | screenshot: ${shotUrl}` : ""),

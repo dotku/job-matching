@@ -15,10 +15,14 @@ export async function markSubmitting(
   savedListingId: string,
   note: string | null = null,
 ): Promise<void> {
+  // attempt_count is incremented here (start of attempt). Increment is
+  // capped at the SQL level so a long-running stuck row doesn't burn it
+  // down on every restart.
   await sql`
     UPDATE saved_listings
     SET status = 'submitting',
-        status_note = ${note}
+        status_note = ${note},
+        attempt_count = attempt_count + 1
     WHERE id = ${savedListingId}
       AND status IN ('queued', 'submitting', 'failed', 'skipped')
   `;
@@ -32,19 +36,30 @@ export async function markSubmitted(
     UPDATE saved_listings
     SET status = 'submitted',
         submitted_at = now(),
-        status_note = ${note}
+        status_note = ${note},
+        outcome = CASE WHEN outcome = 'pending' THEN 'pending' ELSE outcome END,
+        failure_reason = NULL,
+        failure_screenshot_key = NULL
     WHERE id = ${savedListingId}
   `;
+}
+
+export interface FailureDetail {
+  reason?: string;
+  screenshotKey?: string;
 }
 
 export async function markFailed(
   savedListingId: string,
   note: string,
+  detail: FailureDetail = {},
 ): Promise<void> {
   await sql`
     UPDATE saved_listings
     SET status = 'failed',
-        status_note = ${note}
+        status_note = ${note},
+        failure_reason = ${detail.reason ?? null},
+        failure_screenshot_key = ${detail.screenshotKey ?? null}
     WHERE id = ${savedListingId}
   `;
 }
@@ -110,6 +125,36 @@ export async function getCandidateCookieBlob(
   `) as unknown as { auto_apply_cookies_enc: string | null }[];
 
   return rows[0]?.auto_apply_cookies_enc ?? null;
+}
+
+/**
+ * Check whether this candidate has already submitted an application to the
+ * same company within the dedup window (default 90 days). Prevents burning
+ * quota on duplicate applications when the same role appears twice in the
+ * listings feed or the user re-queues the same company.
+ */
+export async function hasRecentSubmission(
+  candidateId: string,
+  savedListingId: string,
+  companyName: string,
+  windowDays = 90,
+): Promise<{ submittedAt: string; title: string } | null> {
+  const rows = (await sql`
+    SELECT submitted_at, title
+    FROM saved_listings
+    WHERE candidate_id = ${candidateId}
+      AND id <> ${savedListingId}
+      AND company_name = ${companyName}
+      AND status = 'submitted'
+      AND submitted_at IS NOT NULL
+      AND submitted_at > now() - (${windowDays} || ' days')::interval
+    ORDER BY submitted_at DESC
+    LIMIT 1
+  `) as unknown as { submitted_at: string; title: string }[];
+
+  return rows[0]
+    ? { submittedAt: rows[0].submitted_at, title: rows[0].title }
+    : null;
 }
 
 /**

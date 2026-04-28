@@ -391,7 +391,12 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
     break;
   }
 
-  if (!clicked) return { status: "failed", note: "Submit button not found." };
+  if (!clicked)
+    return {
+      status: "failed",
+      failureReason: "submit_button_missing",
+      note: "Submit button not found.",
+    };
 
   const deadline = Date.now() + SUBMIT_RESULT_TIMEOUT;
   let success: string | null = null;
@@ -411,11 +416,14 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
   if (success) return { status: "submitted", note: `${success}${summary}` };
 
   let shotUrl = "";
+  let shotKey: string | undefined;
 
   try {
     const buf = await page.screenshot({ fullPage: true, timeout: 5000 });
+    const shot = await ctx.captureDebugShot(Buffer.from(buf));
 
-    shotUrl = await ctx.captureDebugShot(Buffer.from(buf));
+    shotUrl = shot.url;
+    shotKey = shot.key;
   } catch {
     // ignore screenshot failures
   }
@@ -428,6 +436,8 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
 
     return {
       status: "failed",
+      failureReason: "validation_errors",
+      failureScreenshotKey: shotKey,
       note:
         `Form validation errors: ${errors}${err}${summary}` +
         (shotUrl ? ` | screenshot: ${shotUrl}` : ""),
@@ -436,6 +446,8 @@ async function submit(ctx: SubmitContext): Promise<SubmitResult> {
 
   return {
     status: "failed",
+    failureReason: "no_confirmation",
+    failureScreenshotKey: shotKey,
     note:
       `Submit clicked but no confirmation or error within timeout.${summary}` +
       (shotUrl ? ` | screenshot: ${shotUrl}` : ""),

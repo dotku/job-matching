@@ -41,7 +41,10 @@ export function InternshipsClient({
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [queuedIds, setQueuedIds] = useState<Set<string>>(new Set());
   const [bulkState, setBulkState] = useState<
-    { kind: "idle" } | { kind: "queueing" } | { kind: "done"; n: number } | { kind: "error"; msg: string }
+    | { kind: "idle" }
+    | { kind: "queueing" }
+    | { kind: "done"; n: number; skippedBySponsorship: number }
+    | { kind: "error"; msg: string }
   >({ kind: "idle" });
 
   const canMatch =
@@ -111,7 +114,11 @@ export function InternshipsClient({
 
       return next;
     });
-    setBulkState({ kind: "done", n: result.data.queued });
+    setBulkState({
+      kind: "done",
+      n: result.data.queued,
+      skippedBySponsorship: result.data.skippedBySponsorship,
+    });
   }
 
   return (
@@ -241,7 +248,7 @@ function RecommendedSection({
   bulkState:
     | { kind: "idle" }
     | { kind: "queueing" }
-    | { kind: "done"; n: number }
+    | { kind: "done"; n: number; skippedBySponsorship: number }
     | { kind: "error"; msg: string };
   onQueueAll: () => void;
   onQueuedOne: (id: string) => void;
@@ -291,8 +298,17 @@ function RecommendedSection({
 
       {bulkState.kind === "done" && (
         <p className="text-xs text-success-700">
-          Queued {bulkState.n} listing{bulkState.n === 1 ? "" : "s"}. Review on{" "}
-          <a className="underline" href="/apply">/apply</a>.
+          Queued {bulkState.n} listing{bulkState.n === 1 ? "" : "s"}.
+          {bulkState.skippedBySponsorship > 0 && (
+            <>
+              {" "}
+              <span className="text-warning-700">
+                Skipped {bulkState.skippedBySponsorship} that don&apos;t match
+                your visa status.
+              </span>
+            </>
+          )}{" "}
+          Review on <a className="underline" href="/apply">/apply</a>.
         </p>
       )}
       {bulkState.kind === "error" && (

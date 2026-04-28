@@ -5,6 +5,8 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 
 import { Candidate, CandidateInput } from "@/lib/candidates";
+import { VISA_LABELS } from "@/lib/visa";
+
 import {
   clearSavedAction,
   parseResumeAction,
@@ -58,6 +60,15 @@ export function ApplyForm({
   const [pendingResumeKey, setPendingResumeKey] = useState("");
   const [pendingPhone, setPendingPhone] = useState("");
   const [autofilledFields, setAutofilledFields] = useState<string[]>([]);
+  const [visaDetection, setVisaDetection] = useState<
+    | {
+        status: string;
+        label: string;
+        needsSponsorship: boolean | null;
+        signal: string | null;
+      }
+    | null
+  >(null);
   const [isParsing, setIsParsing] = useState(false);
   const [savedCount, setSavedCount] = useState(initialSavedCount);
   const [status, setStatus] = useState<
@@ -132,10 +143,42 @@ export function ApplyForm({
           next.targetRoles = parsed.targetRoles;
           filled.push("Target roles");
         }
+        if (!(next.targetLocations ?? "").trim() && parsed.targetLocations) {
+          next.targetLocations = parsed.targetLocations;
+          filled.push("Target locations");
+        }
+        // Only overwrite when the stored value is empty OR the sentinel default,
+        // so we don't clobber a user who explicitly picked one.
+        const currentAuth = (next.workAuthorization ?? "").trim();
+        const isDefault =
+          currentAuth === "" || currentAuth === "Student Visa (F-1)";
+        const detected =
+          parsed.visaStatus !== "unknown"
+            ? VISA_LABELS[parsed.visaStatus]
+            : "";
+
+        if (isDefault && detected) {
+          next.workAuthorization = detected;
+          filled.push(
+            parsed.needsSponsorship === false
+              ? `Work authorization (${detected}, no sponsorship)`
+              : `Work authorization (${detected}, needs sponsorship)`,
+          );
+        }
 
         return next;
       });
       setAutofilledFields(filled);
+      setVisaDetection(
+        parsed.visaStatus !== "unknown"
+          ? {
+              status: parsed.visaStatus,
+              label: VISA_LABELS[parsed.visaStatus],
+              needsSponsorship: parsed.needsSponsorship,
+              signal: parsed.visaSignal,
+            }
+          : null,
+      );
     } finally {
       setIsParsing(false);
     }
@@ -264,6 +307,37 @@ export function ApplyForm({
             Auto-filled from your resume: {autofilledFields.join(", ")}. Review
             before saving.
           </span>
+        )}
+        {visaDetection && (
+          <div className="rounded-medium border border-primary-200 bg-primary-50/50 p-3 flex flex-col gap-1 text-xs">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] uppercase tracking-wide text-primary-700 bg-primary-100 px-1.5 py-0.5 rounded-full">
+                Visa detected
+              </span>
+              <span className="font-medium text-default-700">
+                {visaDetection.label}
+              </span>
+              {visaDetection.needsSponsorship === true && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warning-100 text-warning-700">
+                  Needs sponsorship
+                </span>
+              )}
+              {visaDetection.needsSponsorship === false && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-success-100 text-success-700">
+                  No sponsorship needed
+                </span>
+              )}
+            </div>
+            {visaDetection.signal && (
+              <div className="text-default-600 italic">
+                &ldquo;{visaDetection.signal}&rdquo;
+              </div>
+            )}
+            <div className="text-default-500">
+              If wrong, edit the Work authorization field below — we use that
+              when answering sponsorship questions on applications.
+            </div>
+          </div>
         )}
       </label>
 
