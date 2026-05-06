@@ -14,7 +14,7 @@
     "@aws-sdk/s3-request-presigner": "^3.954.0",
     "@neondatabase/serverless": "^1.1.0",
     "ai": "^6.0.168",
-    "bullmq": "^5.63.0",
+    "bullmq": "^5.76.5",
     "ioredis": "^5.9.0",
     "pdf-parse": "^2.4.5",
     "playwright": "1.57.0",
