@@ -22,18 +22,18 @@ const candidate = {
 const pool = new Pool({ connectionString: databaseUrl });
 const client = await pool.connect();
 try {
-  // Use email as identity anchor. resume_url is NOT NULL so seed with empty
+  // Use email as identity anchor. resume_key is NOT NULL so seed with empty
   // string — candidate uploads a PDF via /apply to fill it in.
   const candidateRows = await client.query(
     `
-    INSERT INTO candidates (email, full_name, resume_url, linkedin_url, target_roles, target_locations)
+    INSERT INTO candidates (email, full_name, resume_key, linkedin_url, target_roles, target_locations)
     VALUES ($1, $2, '', $3, $4, $5)
     ON CONFLICT (email) DO UPDATE SET
       full_name = EXCLUDED.full_name,
       linkedin_url = EXCLUDED.linkedin_url,
       target_roles = EXCLUDED.target_roles,
       target_locations = EXCLUDED.target_locations
-    RETURNING id, email, full_name, resume_url, linkedin_url
+    RETURNING id, email, full_name, resume_key, linkedin_url
   `,
     [
       candidate.email,
@@ -45,9 +45,9 @@ try {
   );
   const row = candidateRows.rows[0];
   console.log("✓ candidate:", row.id, row.email);
-  if (!row.resume_url) {
+  if (!row.resume_key) {
     console.log(
-      "  ⚠ resume_url is empty — upload a PDF via /apply so the outreach email can link to it.",
+      "  ⚠ resume_key is empty — upload a PDF via /apply so the outreach email can link to it.",
     );
   }
 

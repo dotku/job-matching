@@ -9,7 +9,7 @@ export interface OutreachCandidate {
   id: string;
   email: string;
   full_name: string;
-  resume_url: string; // R2 key
+  resume_key: string; // R2 key
   linkedin_url: string;
   target_roles: string | null;
 }
@@ -70,7 +70,7 @@ export async function getCandidateByEmail(
   email: string,
 ): Promise<OutreachCandidate | null> {
   const rows = (await sql`
-    SELECT id, email, full_name, resume_url, linkedin_url, target_roles
+    SELECT id, email, full_name, resume_key, linkedin_url, target_roles
     FROM candidates
     WHERE lower(email) = lower(${email})
     LIMIT 1
@@ -142,9 +142,11 @@ export async function buildEmail({
   contact: OutreachContact;
   settings: OutreachSettings;
 }): Promise<{ subject: string; text: string; html: string; personalized: boolean }> {
-  const resumeUrl = candidate.resume_url
-    ? await getResumeSignedUrl(candidate.resume_url)
+  const resumeUrl = candidate.resume_key
+    ? await getResumeSignedUrl(candidate.resume_key)
     : "";
+  // ^ candidate.resume_key holds the R2 object key; getResumeSignedUrl wraps it
+  //   into a 24h-signed GET URL. Empty string means no resume uploaded yet.
 
   let subject: string;
   let text: string;

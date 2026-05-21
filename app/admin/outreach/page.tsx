@@ -87,8 +87,8 @@ export default async function OutreachAdmin() {
         </p>
         <p className="text-sm">
           Resume key:{" "}
-          {candidate.resume_url ? (
-            <code>{candidate.resume_url}</code>
+          {candidate.resume_key ? (
+            <code>{candidate.resume_key}</code>
           ) : (
             <em>not uploaded — link will be omitted from emails until /apply upload</em>
           )}
