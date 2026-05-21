@@ -33,7 +33,7 @@
     "libphonenumber-js": "^1.12.42",
     "next": "^15.5.15",
     "next-themes": "^0.4.6",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^8.0.5",
     "pdf-parse": "^2.4.5",
     "postcss": "^8.4.47",
     "react": "^18.0.0",
