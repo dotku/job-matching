@@ -31,7 +31,7 @@
     "framer-motion": "^12.38.0",
     "ioredis": "^5.10.1",
     "libphonenumber-js": "^1.12.42",
-    "next": "^15.5.15",
+    "next": "^15.5.18",
     "next-themes": "^0.4.6",
     "nodemailer": "^6.9.16",
     "pdf-parse": "^2.4.5",
