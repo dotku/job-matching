@@ -1,2 +1,7 @@
-{}
-
+{
+  "functions": {
+    "app/api/cron/send-outreach/route.ts": { "maxDuration": 300 },
+    "app/api/apollo/sync/route.ts": { "maxDuration": 60 },
+    "app/api/outreach/send/route.ts": { "maxDuration": 300 }
+  }
+}

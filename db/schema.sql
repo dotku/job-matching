@@ -240,3 +240,64 @@ DROP TRIGGER IF EXISTS submission_answers_set_updated_at ON submission_answers;
 CREATE TRIGGER submission_answers_set_updated_at
   BEFORE UPDATE ON submission_answers
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- ────────────────────────────────────────────────────────────────────
+-- Outreach pipeline: Apollo → Gmail SMTP, daily-capped to 20/candidate
+-- ────────────────────────────────────────────────────────────────────
+
+-- Contacts sourced from Apollo's People Search. One row per Apollo person,
+-- shared across candidates (sourced_for tracks who pulled them).
+CREATE TABLE IF NOT EXISTS apollo_contacts (
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  apollo_id     text UNIQUE,
+  full_name     text,
+  first_name    text,
+  last_name     text,
+  email         text,
+  title         text,
+  company       text,
+  linkedin_url  text,
+  location      text,
+  raw           jsonb,
+  sourced_for   uuid REFERENCES candidates(id) ON DELETE SET NULL,
+  status        text NOT NULL DEFAULT 'new',
+  created_at    timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS apollo_contacts_status_idx ON apollo_contacts(status);
+CREATE INDEX IF NOT EXISTS apollo_contacts_sourced_for_idx ON apollo_contacts(sourced_for);
+
+-- Every send attempt (success or fail). Used for the daily cap and audit.
+CREATE TABLE IF NOT EXISTS outreach_log (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  candidate_id uuid NOT NULL REFERENCES candidates(id) ON DELETE CASCADE,
+  contact_id   uuid REFERENCES apollo_contacts(id) ON DELETE SET NULL,
+  to_email     text NOT NULL,
+  subject      text,
+  body_text    text,
+  body_html    text,
+  status       text NOT NULL DEFAULT 'sent',
+  error        text,
+  message_id   text,
+  sent_at      timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS outreach_log_sent_at_idx ON outreach_log(sent_at);
+CREATE INDEX IF NOT EXISTS outreach_log_candidate_idx ON outreach_log(candidate_id);
+CREATE UNIQUE INDEX IF NOT EXISTS outreach_log_no_double_send
+  ON outreach_log(candidate_id, contact_id) WHERE status = 'sent';
+
+-- Per-candidate outreach config. The cron looks up the candidate's row to
+-- find their cap and pause flag.
+CREATE TABLE IF NOT EXISTS outreach_settings (
+  candidate_id     uuid PRIMARY KEY REFERENCES candidates(id) ON DELETE CASCADE,
+  daily_cap        int  NOT NULL DEFAULT 20,
+  paused           boolean NOT NULL DEFAULT false,
+  template_subject text,
+  template_body    text,
+  updated_at       timestamptz NOT NULL DEFAULT now()
+);
+
+-- Track which sends were LLM-personalized (GitHub Models) vs template fallback.
+ALTER TABLE outreach_log
+  ADD COLUMN IF NOT EXISTS personalized boolean NOT NULL DEFAULT false;

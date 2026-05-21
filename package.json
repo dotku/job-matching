@@ -33,6 +33,7 @@
     "libphonenumber-js": "^1.12.42",
     "next": "^15.5.15",
     "next-themes": "^0.4.6",
+    "nodemailer": "^6.9.16",
     "pdf-parse": "^2.4.5",
     "postcss": "^8.4.47",
     "react": "^18.0.0",
@@ -45,6 +46,7 @@
   },
   "scripts": {
     "migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
+    "seed:chenhan": "node --env-file-if-exists=.env.local scripts/seed-candidate-chenhan.mjs",
     "predev": "npm run migrate",
     "dev": "next dev --turbopack",
     "prebuild": "npm run migrate",
@@ -57,6 +59,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "@types/nodemailer": "^6.4.17",
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",

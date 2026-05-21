@@ -1,0 +1,51 @@
+name: Daily outreach
+
+# Runs once a day at 15:00 UTC (~08:00 PT, ~11:00 ET).
+# 1) hits /api/apollo/sync to refresh the contact queue (best-effort)
+# 2) hits /api/cron/send-outreach which sends up to outreach_settings.daily_cap
+#    real-email contacts and logs each attempt to outreach_log.
+#
+# Required repo secrets:
+#   OUTREACH_BASE_URL   — e.g. https://jobmatching.us  (or a preview URL)
+#   CRON_SECRET         — same value as the Vercel env CRON_SECRET
+
+on:
+  schedule:
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+    inputs:
+      sync_first:
+        description: "Sync new Apollo contacts before sending"
+        type: boolean
+        default: true
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Sync Apollo contacts (best-effort)
+        if: ${{ github.event_name == 'schedule' || inputs.sync_first }}
+        continue-on-error: true
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.OUTREACH_BASE_URL }}/api/apollo/sync" \
+            -d '{"pages":1,"perPage":25}' \
+            | tee apollo-sync.json
+      - name: Send today's batch
+        run: |
+          curl -fsS \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.OUTREACH_BASE_URL }}/api/cron/send-outreach" \
+            | tee send-result.json
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: outreach-run-${{ github.run_id }}
+          path: |
+            apollo-sync.json
+            send-result.json
+          retention-days: 30
